@@ -1,4 +1,4 @@
-import Animation from "./animation.class.js"
+import Animation from "./animation.class.js";
 
 export default {
     Animation,

@@ -1,8 +1,44 @@
+import VisualElement from "./visual_element/visual_element.class.js";
+
 class Frame {
-    constructor() {}
+    constructor() {
+        this.id = Frame.frame_id++;
+    }
+
+    private static frame_id : number = 0;
+    private id! : number;
     private next! : Frame | null;
-    public setNextFrame = (frame : Frame) => this.next = frame;
-    public getNextFrame = () => this.next || this; 
+    private actions! : {
+        element : VisualElement;
+        event : string;
+        params : any[];
+    }[];
+
+    public setNextFrame(frame : Frame){
+        return this.next = frame;
+    }
+    public getNextFrame() {
+        return this.next || this;
+    }
+    public do(element : VisualElement, event : string, ...params : any) {
+        this.actions.push({
+            element, 
+            event, 
+            params : [this.id, ...params]
+        })
+    }
+    public doAction(element : VisualElement, event : string, ...params : any) {
+        this.actions.push({
+            element, 
+            event, 
+            params : [...params]
+        })
+    }
+    public execute() {
+        for(const action of this.actions) {
+            action.element[action.event](...action.params);
+        }
+    }
 }
 
 class Animation {
@@ -43,8 +79,8 @@ class Animation {
     private static initialized : boolean = false;
     public static initialize() {
         this.initialized = true;
-        Animation.initializeHtml();
-        Animation.initializeFrames();
+        this.initializeHtml();
+        this.initializeFrames();
     }
 //===============================================================================================  
     private static html : HTMLDivElement;
@@ -53,7 +89,7 @@ class Animation {
         this.html.id = "@__MathAnimation__@";
         this.html.style.cssText = `
             display : inline-block;
-            position : absolute;
+            position : relative;
             width : ${this.getProperties().resolution[0]}px;
             height : ${this.getProperties().resolution[1]}px;
             background : ${this.getProperties().background};
