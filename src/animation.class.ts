@@ -4,6 +4,7 @@ import { DefaultVisualElementSettings } from "./visual_element/default_settings.
 class Frame {
     constructor() {
         this.id = Frame.frame_id++;
+        this.actions = [];
     }
 
     private static frame_id : number = 0;
@@ -101,15 +102,24 @@ class Animation {
     }
 //===============================================================================================   
     private static frames : Frame[] = [new Frame()];
-    public static getFrame(index : number) {
+    public static at(index : number) {
         return this.frames[index] || this.frames[0]!;
     }
     private static initializeFrames() {
         for(let i = 0 ; i < this.fps * this.duration; i++) this.frames.push(new Frame());
         for(let i = 0 ; i < this.fps * this.duration; i++) 
-            this.getFrame(i).setNextFrame(
-                this.getFrame(i + 1)
+            this.at(i).setNextFrame(
+                this.at(i + 1)
             );
+    }
+//===============================================================================================
+    public static start() {
+        let frame = this.at(0)
+        const interval = setInterval(() => {
+            frame.execute();
+            if(frame !== frame.getNextFrame()) frame = frame.getNextFrame();
+            else clearInterval(interval);
+        }, 1000 / Animation.fps);
     }
 //===============================================================================================
 

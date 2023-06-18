@@ -48,6 +48,9 @@ class VisualElement {
         this.canvas.style.display = "none";
         this.isVisible = false;
     }
+    protected clear() {
+        this.ctx.clearRect(0, 0, this.settings.width, this.settings.height);
+    }
 }
 
 export default VisualElement;

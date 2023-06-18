@@ -11,7 +11,6 @@ export interface IVisualElementSettings {
     position? : [number, number],
     origin? : [number, number],
 }
-
 export const DefaultVisualElementSettings : IVisualElementSettings = {
         width : 0,
         height : 0,
@@ -24,13 +23,14 @@ export const DefaultVisualElementSettings : IVisualElementSettings = {
 //Polygone===============================================================================================
 
 export interface IPolygonSettings extends IVisualElementSettings {
-    raduis? : number,
-    angles? : number[],
+    radius? : number;
+    angles? : number[] | number;
+    rotation? : number;
     
 }
-
 export const DefaultPolygonSettings : IPolygonSettings = {
     ...DefaultVisualElementSettings,
-    raduis : 1,
-    angles : [120, 120, 120],
+    radius : 1,
+    angles : 120,
+    rotation : 0,
 }
