@@ -34,3 +34,16 @@ export const DefaultPolygonSettings : IPolygonSettings = {
     angles : 120,
     rotation : 0,
 }
+
+//Line===============================================================================================
+
+export interface ILineSettings extends IVisualElementSettings {
+    from? : [number, number];
+    to? : [number, number];
+}
+export const DefaultLineSettings : ILineSettings = {
+    ...DefaultVisualElementSettings,
+    from : [-1, -1],
+    to : [1, 1]
+}
+

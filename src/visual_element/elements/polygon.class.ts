@@ -1,14 +1,13 @@
-import { IPolygonSettings, DefaultPolygonSettings, DefaultVisualElementSettings } from "../default_settings.interface.js";
+import { IPolygonSettings, DefaultPolygonSettings } from "../default_settings.interface.js";
 import { IPolygonStyles, DefaultPolygonStyles } from "../default_styles.interface.js";
 import VisualElement from "../visual_element.class.js";
 import Animation from "../../animation.class.js";
 import Lib from "../../lib/lib.js"
 
-const { Constants, Funcs, Colors } = Lib;
-const { pi } = Constants;
-const { cos, sin } = Funcs;
-const { getChangeFrames } = Lib.Animation;
-const { StringToRGBTuple, RGBTupleToString, RGBToHSL, RGBTransfromFrames, HSLToRGB, HSLTransfromFrames, isRGBColor } = Colors
+const { pi } = Lib.Constants;
+const { cos, sin } = Lib.Funcs;
+const { getTransformFrames } = Lib.Animation;
+const { StringToRGBTuple, RGBTupleToString, RGBToHSL, RGBTransfromFrames, HSLToRGB, HSLTransfromFrames, isRGBColor } = Lib.Colors
 
 class Polygon extends VisualElement {
     constructor(settings : IPolygonSettings, styles : IPolygonStyles) {
@@ -82,31 +81,30 @@ class Polygon extends VisualElement {
             this.draw();
         }
     }
-    private linearRadiusTo(from : number, duration : number, new_radius : number) {
-        const radiusChangeFrames = getChangeFrames(this.settings.radius!, new_radius, duration);
-        let frame = Animation.at(from);
+    private linearRadiusTo(start_frame : number, duration : number, new_radius : number) {
+        const radiusChangeFrames = getTransformFrames(this.settings.radius!, new_radius, duration);
+        let frame = Animation.at(start_frame);
         for(let i = 0; i <= duration; i++) {
             frame.doAction(this, "changeRadiusTo", radiusChangeFrames[i]);
             frame.doAction(this, "draw");
             frame = frame.getNextFrame();
         }
     }
-    private linearRotationBy(from : number, duration : number, rotation : number) {
-        const rotationChangeFrames = getChangeFrames(this.settings.rotation!, this.settings.rotation! + rotation, duration);
-        let frame = Animation.at(from);
+    private linearRotationBy(start_frame : number, duration : number, rotation : number) {
+        const rotationChangeFrames = getTransformFrames(this.settings.rotation!, this.settings.rotation! + rotation, duration);
+        let frame = Animation.at(start_frame);
         for(let i = 0; i <= duration; i++) {
             frame.doAction(this, "changeRotationTo", rotationChangeFrames[i]);
             frame.doAction(this, "draw");
             frame = frame.getNextFrame();
         }
     }
-    private linearChangeColorTo(from : number,  duration : number, new_color : string, type : string = "RGB") {
-        let current_frame = Animation.at(from).getNextFrame();
+    private linearChangeColorTo(start_frame : number,  duration : number, new_color : string, type : string = "RGB") {
+        let current_frame = Animation.at(start_frame).getNextFrame();
         let color_frames : [number, number, number][] = [];
         if(type == "RGB") {
             let start_color = StringToRGBTuple(this.styles.color!);
             let end_color = StringToRGBTuple(new_color);
-            console.log(start_color)
             color_frames = RGBTransfromFrames(start_color, end_color, duration);
         }
         else if(type == "HSL") {
