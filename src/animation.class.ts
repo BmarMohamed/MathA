@@ -101,7 +101,7 @@ class Animation {
         this.parent.appendChild(this.html);
     }
 //===============================================================================================   
-    private static frames : Frame[] = [new Frame()];
+    public static frames : Frame[] = [new Frame()];
     public static at(index : number) {
         return this.frames[index] || this.frames[0]!;
     }

@@ -11,7 +11,7 @@ export interface IPolygonStyles extends IVisualElementStyles {
 }
 
 export const DefaultPolygonStyles : IPolygonStyles = {
-    color : "#fff",
+    color : "#ffffff",
     line_width : 2,
 }
 
@@ -21,6 +21,16 @@ export interface ILineStyles extends IVisualElementStyles {
 }
 
 export const DefaultLineStyles : ILineStyles = {
-    color : "#fff",
+    color : "#ffffff",
+    line_width : 2,
+}
+
+export interface IGraphStyles extends IVisualElementStyles {
+    color? : string,
+    line_width? : number,
+}
+
+export const DefaultGraphStyles : IGraphStyles = {
+    color : "#ffffff",
     line_width : 2,
 }

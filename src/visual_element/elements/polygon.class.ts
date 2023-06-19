@@ -31,6 +31,7 @@ class Polygon extends VisualElement {
     private setDrawStyles() {
         this.ctx.strokeStyle = this.styles.color!;
         this.ctx.lineWidth = this.styles.line_width!;
+        this.ctx.translate(this.settings.position![0], this.settings.position![1]);
     }
     private getAngles() {
         let angles : number[] = [this.settings.rotation!];

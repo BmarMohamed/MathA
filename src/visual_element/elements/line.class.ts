@@ -18,6 +18,7 @@ class Line extends VisualElement {
         );
         this.setDrawStyles();
         this.points = this.getPoints()
+        
     }
 
     private settings! : ILineSettings;
@@ -27,6 +28,7 @@ class Line extends VisualElement {
     private setDrawStyles() {
         this.ctx.strokeStyle = this.styles.color!;
         this.ctx.lineWidth = this.styles.line_width!;
+        this.ctx.translate(this.settings.position![0], this.settings.position![1]);
     }
     private getPoints() : [[number, number], [number, number]] {
         return [
@@ -73,7 +75,6 @@ class Line extends VisualElement {
         if(type == "RGB") {
             let start_color = StringToRGBTuple(this.styles.color!);
             let end_color = StringToRGBTuple(new_color);
-            console.log(start_color)
             color_frames = RGBTransfromFrames(start_color, end_color, duration);
         }
         else if(type == "HSL") {

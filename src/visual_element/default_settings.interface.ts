@@ -47,3 +47,21 @@ export const DefaultLineSettings : ILineSettings = {
     to : [1, 1]
 }
 
+//Graph===============================================================================================
+
+export interface IGraphSettings extends IVisualElementSettings {
+    graph_domains? : Array<[number, number] | number>;
+    unwanted_points_and_domains? : Array<[number, number] | number>;
+    expression? : (x : number) => number;
+    x_step? : number;
+    y_points_after_decimal_point? : number;
+}
+export const DefaultGraphSettings : IGraphSettings = {
+    ...DefaultVisualElementSettings,
+    graph_domains : [[-1, 1]],
+    unwanted_points_and_domains : [],
+    expression : (x : number) => x,
+    x_step : 0.01,
+    y_points_after_decimal_point : 5,
+}
+

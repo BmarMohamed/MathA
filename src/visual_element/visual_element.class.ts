@@ -34,7 +34,7 @@ class VisualElement {
         for(let setting in settings) this.settings[setting] = settings[setting];
         for(let style in styles) this.styles[style] = styles[style];
     }
-    protected getCoordinatesOf(x : number, y : number) {
+    protected getCoordinatesOf(x : number, y : number) : [number, number] {
         return [
             (x - this.settings.domain[0]) * this.settings.width / (this.settings.domain[1] - this.settings.domain[0]),
             (y - this.settings.range[0]) * this.settings.height / (this.settings.range[1] - this.settings.range[0]),
