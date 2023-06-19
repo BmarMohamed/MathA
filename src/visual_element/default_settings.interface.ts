@@ -1,7 +1,5 @@
 import Animation from "../animation.class.js"
 
-//VisualElement===============================================================================================
-
 export interface IVisualElementSettings {
     [key : string] : any;
     width? : number,
@@ -19,9 +17,6 @@ export const DefaultVisualElementSettings : IVisualElementSettings = {
         position : [0, 0],
         origin : [0, 0]
 }
-
-//Polygone===============================================================================================
-
 export interface IPolygonSettings extends IVisualElementSettings {
     radius? : number;
     angles? : number[] | number;
@@ -34,9 +29,6 @@ export const DefaultPolygonSettings : IPolygonSettings = {
     angles : 120,
     rotation : 0,
 }
-
-//Line===============================================================================================
-
 export interface ILineSettings extends IVisualElementSettings {
     from? : [number, number];
     to? : [number, number];
@@ -46,9 +38,6 @@ export const DefaultLineSettings : ILineSettings = {
     from : [-1, -1],
     to : [1, 1]
 }
-
-//Graph===============================================================================================
-
 export interface IGraphSettings extends IVisualElementSettings {
     graph_domains? : Array<[number, number] | number>;
     unwanted_points_and_domains? : Array<[number, number] | number>;
@@ -64,4 +53,10 @@ export const DefaultGraphSettings : IGraphSettings = {
     x_step : 0.01,
     y_points_after_decimal_point : 5,
 }
-
+export interface IPointsSettings extends IVisualElementSettings {
+    points? : [number, number][];
+}
+export const DefaultPointsSettings : IPointsSettings = {
+    ...DefaultVisualElementSettings,
+    points : [],
+}
