@@ -24,15 +24,26 @@ class Path extends VisualElement {
     private points! : [number, number][];
 
     private setDrawStyles() {
-        this.ctx.strokeStyle = this.styles.color!;
-        this.ctx.fillStyle = this.styles.color!;
+        this.ctx.strokeStyle = this.styles.stroke_color!;
+        this.ctx.fillStyle = this.styles.fill_color!;
+        this.ctx.lineWidth = this.styles.line_width!;
         this.ctx.translate(this.settings.position![0], this.settings.position![1]);
+        if(this.styles.gradient_enabled) {
+            const gradient = this.ctx.createLinearGradient(
+                ...this.getCoordinatesOf(...this.styles.gradient_start_position!),
+                ...this.getCoordinatesOf(...this.styles.gradient_end_position!)
+            )
+            for(const color in this.styles.gradient_colors!) {
+                gradient.addColorStop(this.styles.gradient_colors![color], color)
+            }
+            this.ctx.strokeStyle = gradient;
+            this.ctx.fillStyle = gradient;
+        }
+        this.ctx.globalAlpha = this.styles.opacity!;
     }
-
     private draw() {
         this.clear()
         this.ctx.beginPath();
-
         this.ctx.moveTo(
             ...this.getCoordinatesOf(...this.points[0])
         );
@@ -41,7 +52,10 @@ class Path extends VisualElement {
                 ...this.getCoordinatesOf(...this.points[i])
             );
         }
-        if(this.styles.stroke! > 0) this.ctx.stroke();
+        this.ctx.lineTo(
+            ...this.getCoordinatesOf(...this.points[0])
+        );
+        if(this.styles.draw_type! == "stroke") this.ctx.stroke();
         else this.ctx.fill();
     }
 }

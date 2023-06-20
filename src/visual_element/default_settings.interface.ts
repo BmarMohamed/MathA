@@ -12,8 +12,8 @@ export interface IVisualElementSettings {
 export const DefaultVisualElementSettings : IVisualElementSettings = {
         width : 0,
         height : 0,
-        domain : [-1, 1],
-        range : [-1, 1],
+        domain : [-8, 8],
+        range : [-4.5, 4.5],
         position : [0, 0],
         origin : [0, 0]
 }
@@ -66,11 +66,4 @@ export interface IPathSettings extends IVisualElementSettings {
 export const DefaultPathSettings : IPathSettings = {
     ...DefaultVisualElementSettings,
     points : [],
-}
-export interface IWordSettings extends IVisualElementSettings {
-    word : string
-}
-export const DefaultWordSettings : IWordSettings = {
-    ...DefaultVisualElementSettings,
-    word : "text"
 }

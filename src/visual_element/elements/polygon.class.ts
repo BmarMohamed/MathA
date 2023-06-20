@@ -29,9 +29,22 @@ class Polygon extends VisualElement {
     private points! : [number,number][];
 
     private setDrawStyles() {
-        this.ctx.strokeStyle = this.styles.color!;
+        this.ctx.strokeStyle = this.styles.stroke_color!;
+        this.ctx.fillStyle = this.styles.fill_color!;
         this.ctx.lineWidth = this.styles.line_width!;
         this.ctx.translate(this.settings.position![0], this.settings.position![1]);
+        if(this.styles.gradient_enabled) {
+            const gradient = this.ctx.createLinearGradient(
+                ...this.getCoordinatesOf(...this.styles.gradient_start_position!),
+                ...this.getCoordinatesOf(...this.styles.gradient_end_position!)
+            )
+            for(const color in this.styles.gradient_colors!) {
+                gradient.addColorStop(this.styles.gradient_colors![color], color)
+            }
+            this.ctx.strokeStyle = gradient;
+            this.ctx.fillStyle = gradient;
+        }
+        this.ctx.globalAlpha = this.styles.opacity!;
     }
     private getAngles() {
         let angles : number[] = [this.settings.rotation!];
@@ -58,21 +71,25 @@ class Polygon extends VisualElement {
         this.clear()
         const coordinates : [number, number][] = [];
         for(let point of this.points) coordinates.push(this.getCoordinatesOf(...point) as [number, number])
-        for(let i = 0; i < coordinates.length - 1; i++) {
             this.ctx.beginPath()
-            this.ctx.moveTo(...coordinates[i])
-            this.ctx.lineTo(...coordinates[i + 1])
-            this.ctx.stroke()
-        }
+            this.ctx.moveTo(...coordinates[0])
+            for(let i = 1; i < coordinates.length - 1; i++) {
+                this.ctx.lineTo(...coordinates[i])
+            }
+            if(this.styles.draw_type == "stroke" ) this.ctx.stroke()
+            else this.ctx.fill()
+        
     }
     private changeRadiusTo(new_radius : number) {
         this.settings.radius = new_radius;
         this.points = this.getPoints();
+        this.draw();
     }
     private changeRotationTo(new_rotation : number) {
         this.settings.rotation = new_rotation;
         this.angles = this.getAngles();
         this.points = this.getPoints();
+        this.draw();
     }
     private changeColor(color : string) {
         if(isRGBColor(color)) {
@@ -87,7 +104,6 @@ class Polygon extends VisualElement {
         let frame = Animation.at(start_frame);
         for(let i = 0; i <= duration; i++) {
             frame.doAction(this, "changeRadiusTo", radiusChangeFrames[i]);
-            frame.doAction(this, "draw");
             frame = frame.getNextFrame();
         }
     }
@@ -96,7 +112,6 @@ class Polygon extends VisualElement {
         let frame = Animation.at(start_frame);
         for(let i = 0; i <= duration; i++) {
             frame.doAction(this, "changeRotationTo", rotationChangeFrames[i]);
-            frame.doAction(this, "draw");
             frame = frame.getNextFrame();
         }
     }

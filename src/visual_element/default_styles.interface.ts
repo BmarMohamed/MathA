@@ -1,18 +1,110 @@
 export interface IVisualElementStyles {
     [key : string] : any;
 }
-export const DefaultVisualElementStyles : IVisualElementStyles = {
-
+export const DefaultVisualElementStyles : IVisualElementStyles = {}
+export interface IStrokeColor {
+    stroke_color? : string;
+    opacity? : number
 }
-export interface IPolygonStyles extends IVisualElementStyles {
-    color? : string,
-    line_width? : number,
-    fill_color? : string,
+export const DefaultStrokeColor : IStrokeColor = {
+    stroke_color : "#ffffff",
+    opacity : 1,
 }
+export interface IFillColor {
+    fill_color? : string;
+    opacity? : number
+}
+export const DefaultFillColor : IFillColor = {
+    fill_color : "#ffffff",
+    opacity : 1,
+}
+export interface IGradientColors {
+    gradient_start_position? : [number, number];
+    gradient_end_position? : [number, number];
+    gradient_colors? : Record<string, number>;
+    opacity? : number,
+    gradient_enabled? :boolean,
+}
+export const DefaultGradientColors : IGradientColors = {
+    gradient_start_position : [-8, -4.5],
+    gradient_end_position : [8, 4.5],
+    gradient_colors : {
+        "#000000" : 0,
+        "#ffffff" : 1,
+    },
+    opacity : 1,
+    gradient_enabled : false,
+}
+export interface IDrawType {
+    draw_type? : "stroke" | "fill";
+}
+export const DefaultDrawType : IDrawType = {
+    draw_type : "stroke",
+}
+export interface ILine {
+    line_width? : number;
+}
+export const DefaultLine : ILine = {
+    line_width : 5,
+}
+export interface IPolygonStyles extends IVisualElementStyles, IStrokeColor, IFillColor, IDrawType, IGradientColors, ILine {}
 export const DefaultPolygonStyles : IPolygonStyles = {
-    color : "#ffffff",
-    line_width : 2,
+    ...DefaultFillColor,
+    ...DefaultStrokeColor,
+    ...DefaultGradientColors,
+    ...DefaultLine,
+    ...DefaultDrawType,
 }
+export interface IPathStyles extends IVisualElementStyles, IStrokeColor, IFillColor, IDrawType, IGradientColors, ILine {
+}
+export const DefaultPathStyles : IPathStyles = {
+    ...DefaultFillColor,
+    ...DefaultStrokeColor,
+    ...DefaultGradientColors,
+    ...DefaultLine,
+    ...DefaultDrawType,
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export interface ILineStyles extends IVisualElementStyles {
     color? : string,
     line_width? : number,
@@ -39,26 +131,4 @@ export const DefaultPointsStyles : IPointsStyles = {
     radius : 5,
     color : "#ffffff",
     circle : 0,
-}
-export interface IPathStyles extends IVisualElementStyles {
-    color? : string,
-    stroke? : number,
-    gradient? : boolean,
-    gradient_xy? : [[number, number], [number, number]];
-}
-export const DefaultPathStyles : IPathStyles = {
-    ...DefaultVisualElementStyles,
-    color : "#ffffff",
-    stroke : 0,
-}
-export interface IWordStyles extends IVisualElementStyles {
-    color? : string,
-    type? : "stroke" | "fill",
-    font_size? : number,
-}
-export const DefaultWordStyles : IWordStyles = {
-    ...DefaultVisualElementStyles,
-    color : "#ffffff",
-    type : "fill",
-    font_size : 16,
 }
