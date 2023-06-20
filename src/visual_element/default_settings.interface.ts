@@ -60,3 +60,17 @@ export const DefaultPointsSettings : IPointsSettings = {
     ...DefaultVisualElementSettings,
     points : [],
 }
+export interface IPathSettings extends IVisualElementSettings {
+    points? : [number, number][];
+}
+export const DefaultPathSettings : IPathSettings = {
+    ...DefaultVisualElementSettings,
+    points : [],
+}
+export interface IWordSettings extends IVisualElementSettings {
+    word : string
+}
+export const DefaultWordSettings : IWordSettings = {
+    ...DefaultVisualElementSettings,
+    word : "text"
+}
