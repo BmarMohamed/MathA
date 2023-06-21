@@ -64,40 +64,24 @@ export const DefaultPathStyles : IPathStyles = {
     ...DefaultLine,
     ...DefaultDrawType,
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export interface ITextStyles extends IVisualElementStyles, IStrokeColor, IFillColor, IDrawType, IGradientColors {
+    font_size? : number,
+    max_width? : number,
+    font_family? : string,
+    text_direction? : "rtl" | "ltr",
+    font_weight? : string,
+}
+export const DefaultTextStyles : ITextStyles = {
+    ...DefaultFillColor,
+    ...DefaultStrokeColor,
+    ...DefaultGradientColors,
+    ...DefaultDrawType,
+    font_size : 16,
+    max_width : 8,
+    font_family : "sans-serif",
+    text_direction : "ltr",
+    font_weight : 'normal',
+}
 
 
 

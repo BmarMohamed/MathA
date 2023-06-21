@@ -67,3 +67,10 @@ export const DefaultPathSettings : IPathSettings = {
     ...DefaultVisualElementSettings,
     points : [],
 }
+export interface ITextSettings extends IVisualElementSettings{
+    text? : string;
+}
+export const DefaultTextSettings = {
+    ...DefaultVisualElementSettings,
+    text : "Text",
+}
