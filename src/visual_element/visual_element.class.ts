@@ -28,18 +28,16 @@ class VisualElement {
         this.show();
         document.getElementById("@__MathAnimation__@")!.appendChild(this.canvas);
     }
-    protected initializeSettingsAndStyles<Tsettings, Tstyles>(settings : Tsettings, styles : Tstyles, default_settings : Tsettings, default_styles : Tstyles) {
-        this.settings = { ...default_settings };
-        this.styles = { ...default_styles };
-        this.settings.height = DefaultVisualElementSettings.height;
-        this.settings.width = DefaultVisualElementSettings.width;
-        for(let setting in settings) this.settings[setting] = settings[setting];
-        for(let style in styles) this.styles[style] = styles[style];
+    protected initializeProperties<IPropertiesType>(properties : IPropertiesType, default_properties : IPropertiesType) {
+        this.properties = { ...default_properties }
+        this.properties.height = DefaultVisualElementSettings.height;
+        this.properties.width = DefaultVisualElementSettings.width;
+        for(let property in properties) this.properties[property] = properties[property];
     }
     protected getCoordinatesOf(x : number, y : number) : [number, number] {
         return [
-            (x - this.settings.domain[0]) * this.settings.width / (this.settings.domain[1] - this.settings.domain[0]),
-            (y - this.settings.range[0]) * this.settings.height / (this.settings.range[1] - this.settings.range[0]),
+            (x - this.properties.domain[0]) * this.properties.width / (this.properties.domain[1] - this.properties.domain[0]),
+            (y - this.properties.range[0]) * this.properties.height / (this.properties.range[1] - this.properties.range[0]),
         ]
     }   
     protected show() {
@@ -51,7 +49,7 @@ class VisualElement {
         this.isVisible = false;
     }
     protected clear() {
-        this.ctx.clearRect(0, 0, this.settings.width, this.settings.height);
+        this.ctx.clearRect(0, 0, this.properties.width, this.properties.height);
     }
 }
 

@@ -1,5 +1,5 @@
-import { IGraphSettings, DefaultGraphSettings } from "../default_settings.interface.js";
-import { IGraphStyles, DefaultGraphStyles } from "../default_styles.interface.js";
+import { IGraphElement } from "../properties.interface.js";
+import { DefaultGraphProperties } from "../default_properties.object.js";
 import VisualElement from "../visual_element.class.js";
 import Animation from "../../animation.class.js";
 import Lib from "../../lib/lib.js";
@@ -11,39 +11,43 @@ const { PopRandomElementFromArray } = Lib.Arrays;
 const {isRGBColor, StringToRGBTuple, RGBToHSL, HSLTransfromFrames, RGBTupleToString, HSLToRGB, RGBTransfromFrames} = Lib.Colors;
 
 class Graph extends VisualElement {
-    constructor(settings : IGraphSettings, styles : IGraphStyles) {
+    constructor(properties : IGraphElement) {
         super();
-        this.initializeSettingsAndStyles<IGraphSettings, IGraphStyles>(
-            settings,
-            styles,
-            DefaultGraphSettings,
-            DefaultGraphStyles
-        );
+        this.initializeProperties(properties, DefaultGraphProperties);
         this.setDrawStyles()
-        this.settings.graph_domains = transformPointsToDomains(this.settings.graph_domains!) as Array<[number, number]>;
-        this.settings.unwanted_points_and_domains = transformPointsToDomains(this.settings.unwanted_points_and_domains!) as Array<[number, number]>
+        this.properties.graph_domains = transformPointsToDomains(this.properties.graph_domains!) as Array<[number, number]>;
+        this.properties.unwanted_points_and_domains = transformPointsToDomains(this.properties.unwanted_points_and_domains!) as Array<[number, number]>
         this.domains = this.getDomains();
         this.values = this.getvalues();
         this.points_map = this.getPointsMap();
         this.draw_lines = this.getDrawLines();
     }
 
-    private settings! : IGraphSettings;
-    private styles! : IGraphStyles;
+    private properties! : IGraphElement;
     private domains! : Array<[number, number]>;
     private values! : number[][];
     private points_map! : Map<number, number>;
     private draw_lines! : Array<[[number, number], [number, number]]>
 
     private setDrawStyles() {
-        this.ctx.strokeStyle = this.styles.color!;
-        this.ctx.lineWidth = this.styles.line_width!;
-        this.ctx.translate(this.settings.position![0], this.settings.position![1]);
-        
+        this.ctx.strokeStyle = this.properties.stroke_color!;
+        this.ctx.lineWidth = this.properties.line_width!;
+        this.ctx.translate(this.properties.position![0], this.properties.position![1]);
+        if(this.properties.gradient_enabled) {
+            const gradient = this.ctx.createLinearGradient(
+                ...this.getCoordinatesOf(...this.properties.gradient_start_position!),
+                ...this.getCoordinatesOf(...this.properties.gradient_end_position!)
+            )
+            for(const color in this.properties.gradient_colors!) {
+                gradient.addColorStop(this.properties.gradient_colors![color], color)
+            }
+            this.ctx.strokeStyle = gradient;
+        }
+        this.ctx.globalAlpha = this.properties.opacity!;
     }
     private getDomains() : Array<[number, number]> {
-        let unwanted_domains = this.settings.unwanted_points_and_domains as Array<[number, number]> ;
-        let domains = this.settings.graph_domains as Array<[number, number]>;
+        let unwanted_domains = this.properties.unwanted_points_and_domains as Array<[number, number]> ;
+        let domains = this.properties.graph_domains as Array<[number, number]>;
         for(let unwanted_domain of unwanted_domains) {
             let result : Array<[number, number]> = [];
             for(let domain of domains) {
@@ -58,9 +62,9 @@ class Graph extends VisualElement {
     private transformDomainToValues(domain : [number, number]) {
         const values = [];
         for(
-            let i = toFixedAs(domain[0] + this.settings.x_step!, this.settings.x_step!);
-            i < toFixedAs(domain[1], this.settings.x_step!);
-            i = toFixedAs(i + this.settings.x_step!, this.settings.x_step!)
+            let i = toFixedAs(domain[0] + this.properties.x_step!, this.properties.x_step!);
+            i < toFixedAs(domain[1], this.properties.x_step!);
+            i = toFixedAs(i + this.properties.x_step!, this.properties.x_step!)
         ) values.push(i);
         return values;
     }
@@ -76,7 +80,7 @@ class Graph extends VisualElement {
         for(let values_of_domain of this.values) {
             for(let value of values_of_domain) {
                 points_map.set(value, toFixedAs(
-                    this.settings.expression!(value), Math.pow(10, - this.settings.accuracy)
+                    this.properties.expression!(value), Math.pow(10, - this.properties.accuracy)
                 ));
             }
         }
@@ -85,11 +89,11 @@ class Graph extends VisualElement {
     private isUnwantedLine(from : [number, number], to : [number, number]) {
         if(
             from[0] <= 0 ||
-            to[0] > this.settings.width! ||
+            to[0] > this.properties.width! ||
             from[1] < 0 ||
-            from[1] > this.settings.height! ||
+            from[1] > this.properties.height! ||
             to[1] < 0 ||
-            to[1] > this.settings.height!
+            to[1] > this.properties.height!
         ) 
         return true
         else false;
@@ -134,22 +138,23 @@ class Graph extends VisualElement {
     }
     private changeColor(color : string) {
         if(isRGBColor(color)) {
-            this.styles.color = color;
+            this.properties.color = color;
             this.ctx.strokeStyle = color;
             this.clear();
             this.draw();
         }
     }
     private linearChangeColorTo(start_frame : number,  duration : number, new_color : string, type : string = "RGB") {
+        if(this.properties.gradient_enabled) return;
         let current_frame = Animation.at(start_frame).getNextFrame();
         let color_frames : [number, number, number][] = [];
         if(type == "RGB") {
-            let start_color = StringToRGBTuple(this.styles.color!);
+            let start_color = StringToRGBTuple(this.properties.stroke_color!);
             let end_color = StringToRGBTuple(new_color);
             color_frames = RGBTransfromFrames(start_color, end_color, duration);
         }
         else if(type == "HSL") {
-            let start_color = RGBToHSL(this.styles.color!);
+            let start_color = RGBToHSL(this.properties.stroke_color!);
             let end_color = RGBToHSL(new_color);
             color_frames = HSLTransfromFrames(start_color, end_color, duration);
             color_frames = color_frames.map(color_frame => HSLToRGB(...color_frame));

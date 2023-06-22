@@ -106,7 +106,7 @@ export const DefaultGraphStyles : IGraphStyles = {
     line_width : 2,
 }
 export interface IPointsStyles extends IVisualElementStyles {
-    radius? : number,
+   
     color? : string,
     circle? : number,
 }

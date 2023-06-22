@@ -1,5 +1,5 @@
-import { ILineSettings, DefaultLineSettings } from "../default_settings.interface.js";
-import { ILineStyles, DefaultLineStyles } from "../default_styles.interface.js";
+import { ILineElement } from "../properties.interface.js";
+import { DefaultLineProperties } from "../default_properties.object.js";
 import VisualElement from "../visual_element.class.js";
 import Animation from "../../animation.class.js";
 
@@ -8,32 +8,37 @@ const {getTransformFrames} = Lib.Animation;
 const {isRGBColor, StringToRGBTuple, RGBToHSL, HSLTransfromFrames, RGBTupleToString, HSLToRGB, RGBTransfromFrames} = Lib.Colors;
 
 class Line extends VisualElement {
-    constructor(settings : ILineSettings, styles : ILineStyles) {
+    constructor(properties : ILineElement) {
         super();
-        this.initializeSettingsAndStyles<ILineSettings, ILineStyles>(
-            settings,
-            styles,
-            DefaultLineSettings,
-            DefaultLineStyles
-        );
+        this.initializeProperties<ILineElement>(properties, DefaultLineProperties);
         this.setDrawStyles();
         this.points = this.getPoints()
         
     }
 
-    private settings! : ILineSettings;
-    private styles! : ILineStyles;
-    private points! : [[number, number], [number, number]]
+    private properties! : ILineElement;
+    private points! : [[number, number], [number, number]];
 
     private setDrawStyles() {
-        this.ctx.strokeStyle = this.styles.color!;
-        this.ctx.lineWidth = this.styles.line_width!;
-        this.ctx.translate(this.settings.position![0], this.settings.position![1]);
+        this.ctx.strokeStyle = this.properties.stroke_color!;
+        this.ctx.lineWidth = this.properties.line_width!;
+        this.ctx.translate(this.properties.position![0], this.properties.position![1]);
+        if(this.properties.gradient_enabled) {
+            const gradient = this.ctx.createLinearGradient(
+                ...this.getCoordinatesOf(...this.properties.gradient_start_position!),
+                ...this.getCoordinatesOf(...this.properties.gradient_end_position!)
+            )
+            for(const color in this.properties.gradient_colors!) {
+                gradient.addColorStop(this.properties.gradient_colors![color], color)
+            }
+            this.ctx.strokeStyle = gradient;
+        }
+        this.ctx.globalAlpha = this.properties.opacity!;
     }
     private getPoints() : [[number, number], [number, number]] {
         return [
-            this.getCoordinatesOf(...this.settings.from!) as [number, number],
-            this.getCoordinatesOf(...this.settings.to!) as [number, number]
+            this.getCoordinatesOf(...this.properties.from!) as [number, number],
+            this.getCoordinatesOf(...this.properties.to!) as [number, number]
         ]
     }
     private draw() {
@@ -44,24 +49,24 @@ class Line extends VisualElement {
             this.ctx.stroke();
     }
     private changeCoordinates(from : [number, number], to : [number, number]) {
-        this.settings.from = from;
-        this.settings.to = to;
+        this.properties.from = from;
+        this.properties.to = to;
         this.points = this.getPoints();
         this.draw();
     }
     private changeColor(color : string) {
         if(isRGBColor(color)) {
-            this.styles.color = color;
+            this.properties.color = color;
             this.ctx.strokeStyle = color;
             this.clear();
             this.draw();
         }
     }
     private linearChangeCoordinates(start_frame : number, duration : number, new_from : [number, number], new_to : [number, number]) {
-        const xFromChangeFrames = getTransformFrames(this.settings.from![0], new_from[0], duration);
-        const yFromChangeFrames = getTransformFrames(this.settings.from![1], new_from[1], duration);
-        const xToChangeFrames = getTransformFrames(this.settings.to![0], new_to[0], duration);
-        const yToChangeFrames = getTransformFrames(this.settings.to![1], new_to[1], duration);
+        const xFromChangeFrames = getTransformFrames(this.properties.from![0], new_from[0], duration);
+        const yFromChangeFrames = getTransformFrames(this.properties.from![1], new_from[1], duration);
+        const xToChangeFrames = getTransformFrames(this.properties.to![0], new_to[0], duration);
+        const yToChangeFrames = getTransformFrames(this.properties.to![1], new_to[1], duration);
         let frame = Animation.at(start_frame);
         for(let i = 0; i <= duration; i++) {
             frame.doAction(this, "changeCoordinates", [xFromChangeFrames[i], yFromChangeFrames[i]], [xToChangeFrames[i], yToChangeFrames[i]]);
@@ -70,15 +75,16 @@ class Line extends VisualElement {
         }
     }
     private linearChangeColorTo(start_frame : number,  duration : number, new_color : string, type : string = "RGB") {
+        if(this.properties.gradient_enabled) return;
         let current_frame = Animation.at(start_frame).getNextFrame();
         let color_frames : [number, number, number][] = [];
         if(type == "RGB") {
-            let start_color = StringToRGBTuple(this.styles.color!);
+            let start_color = StringToRGBTuple(this.properties.stroke_color!);
             let end_color = StringToRGBTuple(new_color);
             color_frames = RGBTransfromFrames(start_color, end_color, duration);
         }
         else if(type == "HSL") {
-            let start_color = RGBToHSL(this.styles.color!);
+            let start_color = RGBToHSL(this.properties.stroke_color!);
             let end_color = RGBToHSL(new_color);
             color_frames = HSLTransfromFrames(start_color, end_color, duration);
             color_frames = color_frames.map(color_frame => HSLToRGB(...color_frame));

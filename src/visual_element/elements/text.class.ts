@@ -1,49 +1,43 @@
 import VisualElement from "../visual_element.class.js";
-import { ITextSettings, DefaultTextSettings } from "../default_settings.interface.js";
-import { ITextStyles, DefaultTextStyles } from "../default_styles.interface.js";
+import { ITextElement } from "../properties.interface.js";
+import { DefaultTextProperties } from "../default_properties.object.js";
 
 class Text extends VisualElement {
-    constructor(settings : ITextSettings, styles : ITextStyles) {
+    constructor(properties : ITextElement) {
         super();
-        this.initializeSettingsAndStyles<ITextSettings, ITextStyles>(
-            settings,
-            styles,
-            DefaultTextSettings,
-            DefaultTextStyles
-        );
+        this.initializeProperties<ITextElement>(properties, DefaultTextProperties);
         this.setDrawStyles();
     }
 
-    private settings! : ITextSettings;
-    private styles! : ITextStyles;
+    private properties! : ITextElement;
 
     private setDrawStyles() {
-        this.ctx.strokeStyle = this.styles.stroke_color!;
-        this.ctx.fillStyle = this.styles.fill_color!;
-        this.ctx.font = `${this.styles.font_weight!} ${this.styles.font_size!}px ${this.styles.font_family!}`;
-        this.ctx.translate(this.settings.position![0], this.settings.position![1]);
+        this.ctx.strokeStyle = this.properties.stroke_color!;
+        this.ctx.fillStyle = this.properties.fill_color!;
+        this.ctx.font = `${this.properties.font_weight!} ${this.properties.font_size!}px ${this.properties.font_family!}`;
+        this.ctx.translate(this.properties.position![0], this.properties.position![1]);
         this.canvas.style.transform = "scale(1, 1)"
-        if(this.styles.gradient_enabled) {
+        if(this.properties.gradient_enabled) {
             const gradient = this.ctx.createLinearGradient(
-                ...this.getCoordinatesOf(...this.styles.gradient_start_position!),
-                ...this.getCoordinatesOf(...this.styles.gradient_end_position!)
+                ...this.getCoordinatesOf(...this.properties.gradient_start_position!),
+                ...this.getCoordinatesOf(...this.properties.gradient_end_position!)
             )
-            for(const color in this.styles.gradient_colors!) {
-                gradient.addColorStop(this.styles.gradient_colors![color], color)
+            for(const color in this.properties.gradient_colors!) {
+                gradient.addColorStop(this.properties.gradient_colors![color], color)
             }
             this.ctx.strokeStyle = gradient;
             this.ctx.fillStyle = gradient;
         }
-        this.ctx.globalAlpha = this.styles.opacity!;
+        this.ctx.globalAlpha = this.properties.opacity!;
         this.ctx.textAlign = "center";
         this.ctx.textBaseline = "middle";
-        this.ctx.direction = this.styles.text_direction!;
+        this.ctx.direction = this.properties.text_direction!;
     }
     private write() {
-        const coordinates = this.getCoordinatesOf(this.settings.origin![0], -this.settings.origin![1]);
-        const max_width = this.getCoordinatesOf(this.styles.max_width! - 8, 0);
-        if(this.styles.draw_type == "stroke") this.ctx.strokeText(this.settings.text!, ...coordinates, max_width[0]);
-        else this.ctx.fillText(this.settings.text!,...coordinates, max_width[0]);
+        const coordinates = this.getCoordinatesOf(this.properties.origin![0], -this.properties.origin![1]);
+        const max_width = this.getCoordinatesOf(this.properties.max_width! - 8, 0);
+        if(this.properties.draw_type == "stroke") this.ctx.strokeText(this.properties.text!, ...coordinates, max_width[0]);
+        else this.ctx.fillText(this.properties.text!,...coordinates, max_width[0]);
     }
 }
 

@@ -1,45 +1,37 @@
 import VisualElement from "../visual_element.class.js";
-import { IPathSettings, DefaultPathSettings } from "../default_settings.interface.js";
-import { IPathStyles, DefaultPathStyles } from "../default_styles.interface.js";
 import Animation from "../../animation.class.js";
 
 import Lib from "../../lib/lib.js";
+import { IPathElement } from "../properties.interface.js";
+import { DefaultPathProperties } from "../default_properties.object.js";
 
 class Path extends VisualElement {
-    constructor(settings : IPathSettings, styles : IPathStyles) {
+    constructor(properties : IPathElement) {
         super();
-        this.initializeSettingsAndStyles<IPathSettings, IPathStyles>(
-            settings,
-            styles,
-            DefaultPathSettings,
-            DefaultPathStyles
-        );
-        this.points = this.settings.points!;
+        this.initializeProperties<IPathElement>(properties, DefaultPathProperties);
+        this.points = this.properties.points!;
         this.setDrawStyles();
-        if(this.styles.gradient) this.setGradient()
+        if(this.properties.gradient) this.setGradient()
     }
-
-    private settings! : IPathSettings;
-    private styles! : IPathStyles;
+    private properties! : IPathElement;
     private points! : [number, number][];
-
     private setDrawStyles() {
-        this.ctx.strokeStyle = this.styles.stroke_color!;
-        this.ctx.fillStyle = this.styles.fill_color!;
-        this.ctx.lineWidth = this.styles.line_width!;
-        this.ctx.translate(this.settings.position![0], this.settings.position![1]);
-        if(this.styles.gradient_enabled) {
+        this.ctx.strokeStyle = this.properties.stroke_color!;
+        this.ctx.fillStyle = this.properties.fill_color!;
+        this.ctx.lineWidth = this.properties.line_width!;
+        this.ctx.translate(this.properties.position![0], this.properties.position![1]);
+        if(this.properties.gradient_enabled) {
             const gradient = this.ctx.createLinearGradient(
-                ...this.getCoordinatesOf(...this.styles.gradient_start_position!),
-                ...this.getCoordinatesOf(...this.styles.gradient_end_position!)
+                ...this.getCoordinatesOf(...this.properties.gradient_start_position!),
+                ...this.getCoordinatesOf(...this.properties.gradient_end_position!)
             )
-            for(const color in this.styles.gradient_colors!) {
-                gradient.addColorStop(this.styles.gradient_colors![color], color)
+            for(const color in this.properties.gradient_colors!) {
+                gradient.addColorStop(this.properties.gradient_colors![color], color)
             }
             this.ctx.strokeStyle = gradient;
             this.ctx.fillStyle = gradient;
         }
-        this.ctx.globalAlpha = this.styles.opacity!;
+        this.ctx.globalAlpha = this.properties.opacity!;
     }
     private draw() {
         this.clear()
@@ -55,7 +47,7 @@ class Path extends VisualElement {
         this.ctx.lineTo(
             ...this.getCoordinatesOf(...this.points[0])
         );
-        if(this.styles.draw_type! == "stroke") this.ctx.stroke();
+        if(this.properties.draw_type! == "stroke") this.ctx.stroke();
         else this.ctx.fill();
     }
 }

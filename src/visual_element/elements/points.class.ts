@@ -1,56 +1,67 @@
-import VisualElement from "../visual_element.class.js";
-import { IPointsSettings, DefaultPointsSettings } from "../default_settings.interface.js";
-import { IPointsStyles, DefaultPointsStyles } from "../default_styles.interface.js";
-import Animation from "../../animation.class.js";
+/*rebuild*/
 
+import VisualElement from "../visual_element.class.js";
+import { IPointsElement } from "../properties.interface.js";
+import Animation from "../../animation.class.js";
 import Lib from "../../lib/lib.js";
+import { DefaultPointsProperties } from "../default_properties.object.js";
 const { pi } = Lib.Constants;
 const { getTransformFrames } = Lib.Animation;
 
 class Points extends VisualElement {
-    constructor(settings : IPointsSettings, styles : IPointsStyles) {
+    constructor(properties : IPointsElement) {
         super();
-        this.initializeSettingsAndStyles<IPointsSettings, IPointsStyles>(
-            settings,
-            styles,
-            DefaultPointsSettings,
-            DefaultPointsStyles
-        );
-        this.points = this.settings.points!;
+        this.initializeProperties<IPointsElement>(properties, DefaultPointsProperties);
+        this.points = this.properties.points!;
         this.setDrawStyles();
     }
 
-    private settings! : IPointsSettings;
-    private styles! : IPointsStyles;
+    private properties! : IPointsElement;
     private points! : [number, number][];
 
     private setDrawStyles() {
-        this.ctx.strokeStyle = this.styles.color!;
-        this.ctx.fillStyle = this.styles.color!;
-        this.ctx.translate(this.settings.position![0], this.settings.position![1]);
+        this.ctx.strokeStyle = this.properties.stroke_color!;
+        this.ctx.fillStyle = this.properties.fill_color!;
+        this.ctx.lineWidth = this.properties.line_width!;
+        this.ctx.translate(this.properties.position![0], this.properties.position![1]);
+        if(this.properties.gradient_enabled) {
+            const gradient = this.ctx.createLinearGradient(
+                ...this.getCoordinatesOf(...this.properties.gradient_start_position!),
+                ...this.getCoordinatesOf(...this.properties.gradient_end_position!)
+            )
+            for(const color in this.properties.gradient_colors!) {
+                gradient.addColorStop(this.properties.gradient_colors![color], color)
+            }
+            this.ctx.strokeStyle = gradient;
+            this.ctx.fillStyle = gradient;
+        }
+        this.ctx.globalAlpha = this.properties.opacity!;
     }
-    private drawPoint(x : number, y : number, radius : number,) {
-        this.styles.radius = radius;
+    private drawPoint(x : number, y : number) {
         const position = this.getCoordinatesOf(x, y);
         this.ctx.beginPath();
-        this.ctx.arc(...position, this.styles.radius!, 0, pi * 2);
-        if(this.styles.circle! > 0) {
-            this.ctx.lineWidth = this.styles.circle!;
+        this.ctx.arc(...position, this.properties.radius!, 0, pi * 2);
+        if(this.properties.draw_type == "stroke") {
             this.ctx.stroke();
         }
         else this.ctx.fill();
     }
-    private linearDrawPointByRadius(start_frame : number, duration : number, initial_raduis : number) {
-        let raduis_tranfom_frames = getTransformFrames(initial_raduis, this.styles.radius!, duration);
+    private linearChangeRadius(start_frame : number, duration : number, new_raduis : number) {
+        let raduis_tranfom_frames = getTransformFrames(this.properties.radius!, new_raduis, duration);
         let frame = Animation.at(start_frame);
         for(let i = 0; i <= duration; i++) {
-            frame.doAction(this, "draw", raduis_tranfom_frames[i]);
+            frame.doAction(this, "changeRadius", raduis_tranfom_frames[i]);
             frame = frame.getNextFrame();
         }
     }
-    private draw(radius : number) {
+    private changeRadius(radius : number) {
+        this.clear();
+        this.properties.radius = radius;
+        this.draw();
+    }
+    private draw() {
         this.clear()
-        for(let point of this.points) this.drawPoint(...point, radius);
+        for(let point of this.points) this.drawPoint(...point);
     }
 }
 

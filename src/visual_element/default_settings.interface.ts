@@ -1,5 +1,3 @@
-import Animation from "../animation.class.js"
-
 export interface IVisualElementSettings {
     [key : string] : any;
     width? : number,
