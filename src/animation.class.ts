@@ -28,6 +28,7 @@ class Frame {
             event, 
             params : [this.id, ...params]
         })
+        return this;
     }
     public doAction(element : VisualElement, event : string, ...params : any) {
         this.actions.push({
@@ -35,6 +36,7 @@ class Frame {
             event, 
             params : [...params]
         })
+        return this;
     }
     public execute() {
         for(const action of this.actions) {

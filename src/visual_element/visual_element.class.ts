@@ -29,8 +29,8 @@ class VisualElement {
         document.getElementById("@__MathAnimation__@")!.appendChild(this.canvas);
     }
     protected initializeSettingsAndStyles<Tsettings, Tstyles>(settings : Tsettings, styles : Tstyles, default_settings : Tsettings, default_styles : Tstyles) {
-        this.settings = default_settings;
-        this.styles = default_styles;
+        this.settings = { ...default_settings };
+        this.styles = { ...default_styles };
         this.settings.height = DefaultVisualElementSettings.height;
         this.settings.width = DefaultVisualElementSettings.width;
         for(let setting in settings) this.settings[setting] = settings[setting];
