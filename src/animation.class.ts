@@ -1,5 +1,5 @@
 import VisualElement from "./visual_element/visual_element.class.js";
-import { DefaultVisualElementSettings } from "./visual_element/default_settings.interface.js";
+import { Render } from "./visual_element/default_properties.object.js";
 
 class Frame {
     constructor() {
@@ -85,8 +85,8 @@ class Animation {
         this.initialized = true;
         this.initializeHtml();
         this.initializeFrames();
-        DefaultVisualElementSettings.width = this.getProperties().resolution[0];
-        DefaultVisualElementSettings.height = this.getProperties().resolution[1];
+        Render.width = this.getProperties().resolution[0];
+        Render.height = this.getProperties().resolution[1];
     }
 //===============================================================================================  
     private static html : HTMLDivElement;

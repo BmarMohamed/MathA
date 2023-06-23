@@ -15,10 +15,8 @@ class Points extends VisualElement {
         this.points = this.properties.points!;
         this.setDrawStyles();
     }
-
     private properties! : IPointsElement;
     private points! : [number, number][];
-
     private setDrawStyles() {
         this.ctx.strokeStyle = this.properties.stroke_color!;
         this.ctx.fillStyle = this.properties.fill_color!;

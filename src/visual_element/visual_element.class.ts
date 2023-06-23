@@ -1,5 +1,5 @@
 import Animation from "../animation.class.js";
-import { DefaultVisualElementSettings } from "./default_settings.interface.js";
+import { Render } from "./default_properties.object.js";
 
 class VisualElement {
     [key : string] : any;
@@ -30,8 +30,8 @@ class VisualElement {
     }
     protected initializeProperties<IPropertiesType>(properties : IPropertiesType, default_properties : IPropertiesType) {
         this.properties = { ...default_properties }
-        this.properties.height = DefaultVisualElementSettings.height;
-        this.properties.width = DefaultVisualElementSettings.width;
+        this.properties.height = Render.height;
+        this.properties.width = Render.width;
         for(let property in properties) this.properties[property] = properties[property];
     }
     protected getCoordinatesOf(x : number, y : number) : [number, number] {

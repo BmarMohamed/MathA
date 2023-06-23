@@ -87,6 +87,7 @@ export const DefaultPathProperties : IPathElement = {
     points : [],
 }
 export const DefaultTextProperties : ITextElement = {
+    ...DrawType,
     ...Render,
     font_size : 16,
     max_width : 8,

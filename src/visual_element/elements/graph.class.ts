@@ -6,7 +6,6 @@ import Lib from "../../lib/lib.js";
 
 const { toFixedAs } = Lib.Numbers;
 const { transformPointsToDomains, subtractDomains } = Lib.Domains;
-const { getTransformFrames } = Lib.Animation;
 const { PopRandomElementFromArray } = Lib.Arrays;
 const {isRGBColor, StringToRGBTuple, RGBToHSL, HSLTransfromFrames, RGBTupleToString, HSLToRGB, RGBTransfromFrames} = Lib.Colors;
 
