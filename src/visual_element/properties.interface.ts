@@ -29,11 +29,11 @@ interface IDrawType extends IFill, IStroke {
     draw_type? : "stroke" | "fill";
 }
 interface IFont extends IDrawType {
-    font_size : number,
-    max_width : number,
-    font_family : string,
-    text_direction : "ltr" | "rtl",
-    font_weight : string,
+    font_size? : number,
+    max_width? : number,
+    font_family? : string,
+    text_direction? : "ltr" | "rtl",
+    font_weight? : string,
 }
 export { IRender, IGradientColors, IOpacity, ILine, IStroke, IFill, IDrawType }
 export interface IPolygonElement extends IRender , IDrawType {

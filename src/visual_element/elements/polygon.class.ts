@@ -13,7 +13,8 @@ class Polygon extends VisualElement {
     constructor(properties : IPolygonElement) {
         super();
         this.initializeProperties<IPolygonElement>(properties, DefaultPolygonProperties);
-        this.setDrawStyles();
+        this.applyStyles();
+
         this.angles = this.getAngles();
         this.points = this.getPoints()
     }
@@ -22,24 +23,6 @@ class Polygon extends VisualElement {
     private angles! : number[];
     private points! : [number,number][];
 
-    private setDrawStyles() {
-        this.ctx.strokeStyle = this.properties.stroke_color!;
-        this.ctx.fillStyle = this.properties.fill_color!;
-        this.ctx.lineWidth = this.properties.line_width!;
-        this.ctx.translate(this.properties.position![0], this.properties.position![1]);
-        if(this.properties.gradient_enabled) {
-            const gradient = this.ctx.createLinearGradient(
-                ...this.getCoordinatesOf(...this.properties.gradient_start_position!),
-                ...this.getCoordinatesOf(...this.properties.gradient_end_position!)
-            )
-            for(const color in this.properties.gradient_colors!) {
-                gradient.addColorStop(this.properties.gradient_colors![color], color)
-            }
-            this.ctx.strokeStyle = gradient;
-            this.ctx.fillStyle = gradient;
-        }
-        this.ctx.globalAlpha = this.properties.opacity!;
-    }
     private getAngles() {
         let angles : number[] = [this.properties.rotation!];
         if(typeof this.properties.angles === 'number') {

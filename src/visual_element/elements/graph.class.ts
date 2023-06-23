@@ -13,7 +13,7 @@ class Graph extends VisualElement {
     constructor(properties : IGraphElement) {
         super();
         this.initializeProperties(properties, DefaultGraphProperties);
-        this.setDrawStyles()
+        this.applyStyles();
         this.properties.graph_domains = transformPointsToDomains(this.properties.graph_domains!) as Array<[number, number]>;
         this.properties.unwanted_points_and_domains = transformPointsToDomains(this.properties.unwanted_points_and_domains!) as Array<[number, number]>
         this.domains = this.getDomains();
@@ -28,22 +28,6 @@ class Graph extends VisualElement {
     private points_map! : Map<number, number>;
     private draw_lines! : Array<[[number, number], [number, number]]>
 
-    private setDrawStyles() {
-        this.ctx.strokeStyle = this.properties.stroke_color!;
-        this.ctx.lineWidth = this.properties.line_width!;
-        this.ctx.translate(this.properties.position![0], this.properties.position![1]);
-        if(this.properties.gradient_enabled) {
-            const gradient = this.ctx.createLinearGradient(
-                ...this.getCoordinatesOf(...this.properties.gradient_start_position!),
-                ...this.getCoordinatesOf(...this.properties.gradient_end_position!)
-            )
-            for(const color in this.properties.gradient_colors!) {
-                gradient.addColorStop(this.properties.gradient_colors![color], color)
-            }
-            this.ctx.strokeStyle = gradient;
-        }
-        this.ctx.globalAlpha = this.properties.opacity!;
-    }
     private getDomains() : Array<[number, number]> {
         let unwanted_domains = this.properties.unwanted_points_and_domains as Array<[number, number]> ;
         let domains = this.properties.graph_domains as Array<[number, number]>;

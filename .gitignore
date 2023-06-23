@@ -2,3 +2,4 @@ out
 __test__
 index.html
 Cairo
+**.template.ts
