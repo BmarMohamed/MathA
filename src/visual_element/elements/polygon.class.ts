@@ -76,6 +76,11 @@ class Polygon extends VisualElement {
             this.draw();
         }
     }
+    private changeOpacity(new_opacity : number) {
+        this.properties.opacity = new_opacity;
+        this.ctx.globalAlpha = this.properties.opacity
+        this.draw();
+    }
     private linearRadiusTo(start_frame : number, duration : number, new_radius : number) {
         const radiusChangeFrames = getTransformFrames(this.properties.radius!, new_radius, duration);
         let frame = Animation.at(start_frame);
@@ -100,7 +105,6 @@ class Polygon extends VisualElement {
         if(this.properties.draw_type == "stroke" ) old_color = this.properties.stroke_color!;
         else old_color = this.properties.stroke_color!
         if(type == "RGB") {
-            
             let start_color = StringToRGBTuple(old_color);
             let end_color = StringToRGBTuple(new_color);
             color_frames = RGBTransfromFrames(start_color, end_color, duration);
@@ -115,6 +119,9 @@ class Polygon extends VisualElement {
             current_frame.doAction(this, 'changeColor', RGBTupleToString(color_frame));
             current_frame = current_frame.getNextFrame();
         }
+    }
+    private linearChangeOpacity(start_frame : number, duration : number, new_opacity : number) {
+        this.linearChangeEvenet(start_frame, duration, {"opacity" : [this.properties, new_opacity, "changeOpacity"]});
     }
 }
 

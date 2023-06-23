@@ -1,6 +1,7 @@
 import Animation from "../animation.class.js";
 import { Render } from "./default_properties.object.js";
-import { IStroke, } from "./properties.interface.js";
+import Lib from "../lib/lib.js";
+const { getTransformFrames } = Lib.Animation;
 
 class VisualElement {
     [key : string] : any;
@@ -63,7 +64,20 @@ class VisualElement {
             (x - this.properties.domain[0]) * this.properties.width / (this.properties.domain[1] - this.properties.domain[0]),
             (this.properties.range[1] - y) * this.properties.height / (this.properties.range[1] - this.properties.range[0]),
         ]
-    }   
+    }
+    protected linearChangeEvenet(start_frame : number, duration : number, properties : Record<string, [any, any, string]>) {
+        const ChangeFrames : Record<string, any> = {};
+        for(let property in properties) {
+            ChangeFrames[property] = getTransformFrames(properties[property][0][property], properties[property][1], duration);
+        }
+        let frame = Animation.at(start_frame);
+        for(let i = 0; i <= duration; i++) {
+            for(let property in ChangeFrames) {
+                frame.doAction(this, properties[property][2], ChangeFrames[property][i]);
+            }
+            frame = frame.getNextFrame();
+        }
+    }
     protected show() {
         this.canvas.style.display = "inline_block";
         this.isVisible = true;

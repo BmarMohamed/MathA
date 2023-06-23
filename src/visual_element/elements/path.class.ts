@@ -33,6 +33,13 @@ class Path extends VisualElement {
         if(this.properties.draw_type! == "stroke") this.ctx.stroke();
         else this.ctx.fill();
     }
+    private ChangeOpacity(new_opacity : number) {
+        this.properties.opacity = new_opacity;
+        this.ctx.globalAlpha = this.properties.opacity
+    }
+    private linearChangeOpacity(start_frame : number, duration : number, new_opacity : number) {
+        this.linearChangeEvenet(start_frame, duration, {"opacity" : [this.properties, new_opacity, "ChangeOpacity"]});
+    }
 }
 
 export default Path;
