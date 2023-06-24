@@ -1,7 +1,7 @@
 import Animation from "../animation.class.js";
 import { Render } from "./default_properties.object.js";
 import Lib from "../lib/lib.js";
-import Events from "./properties_functions/event.js";
+import Events from "./events/event.js";
 const { getTransformFrames } = Lib.Animation;
 
 class VisualElement {
@@ -14,7 +14,7 @@ class VisualElement {
     private static visual_element_id = 0;
     protected id! : number; 
     public canvas! :  HTMLCanvasElement;
-    protected ctx! : CanvasRenderingContext2D;
+    public ctx! : CanvasRenderingContext2D;
     protected isVisible! : boolean;
 
     private initialize() {

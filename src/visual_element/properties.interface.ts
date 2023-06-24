@@ -25,18 +25,18 @@ interface IStroke extends IGradientColors, IOpacity, ILine {
 interface IFill extends IGradientColors, IOpacity {
     fill_color? : string;
 }
-interface IDrawType extends IFill, IStroke {
-    draw_type? : "stroke" | "fill";
+interface IDrawStyle extends IFill, IStroke {
+    draw_style? : "stroke" | "fill";
 }
-interface IFont extends IDrawType {
+interface IFont extends IDrawStyle {
     font_size? : number,
     max_width? : number,
     font_family? : string,
     text_direction? : "ltr" | "rtl",
     font_weight? : string,
 }
-export { IRender, IGradientColors, IOpacity, ILine, IStroke, IFill, IDrawType }
-export interface IPolygonElement extends IRender , IDrawType {
+export { IRender, IGradientColors, IOpacity, ILine, IStroke, IFill, IDrawStyle }
+export interface IPolygonElement extends IRender , IDrawStyle {
     radius? : number;
     angles? : number[] | number;
     rotation? : number;
@@ -52,11 +52,11 @@ export interface IGraphElement extends IRender, IStroke {
     x_step? : number;
     y_points_after_decimal_point? : number;
 }
-export interface IPointsElement extends IRender, IDrawType {
+export interface IPointsElement extends IRender, IDrawStyle {
     points? : [number, number][];
     radius? : number,
 }
-export interface IPathElement extends IRender, IDrawType {
+export interface IPathElement extends IRender, IDrawStyle {
     points? : [number, number][];
 }
 export interface ITextElement extends IRender, IFont {

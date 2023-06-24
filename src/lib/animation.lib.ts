@@ -14,7 +14,6 @@ const Animation = {
                 }
             }
         }
-        console.log(transformFrames)
         return transformFrames;
     },
 }

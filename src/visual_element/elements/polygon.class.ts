@@ -2,19 +2,20 @@ import { IPolygonElement } from "../properties.interface.js";
 import { DefaultPolygonProperties } from "../default_properties.object.js";
 import VisualElement from "../visual_element.class.js";
 import Animation from "../../animation.class.js";
-import RenderEvents from "../properties_functions/render.event.js";
+import RenderEvents from "../events/render.event.js";
+import DrawStyleEvents from "../events/draw_style.event.js";
 import Lib from "../../lib/lib.js"
 
 const { pi } = Lib.Constants;
 const { cos, sin } = Lib.Funcs;
 const { getTransformFrames } = Lib.Animation;
-const { StringToRGBTuple, RGBTupleToString, RGBToHSL, RGBTransfromFrames, HSLToRGB, HSLTransfromFrames, isRGBColor } = Lib.Colors
+// const { StringToRGBTuple, RGBTupleToString, RGBToHSL, RGBTransfromFrames, HSLToRGB, HSLTransfromFrames, isRGBColor } = Lib.Colors
 
 class Polygon extends VisualElement {
     constructor(properties : IPolygonElement) {
         super();
         this.initializeProperties<IPolygonElement>(properties, DefaultPolygonProperties);
-        this.initializeEvents([RenderEvents]);
+        this.initializeEvents([RenderEvents, DrawStyleEvents]);
         this.applyStyles();
         this.angles = this.getAngles();
         this.points = this.getPoints()
@@ -54,7 +55,7 @@ class Polygon extends VisualElement {
             for(let i = 1; i < coordinates.length - 1; i++) {
                 this.ctx.lineTo(...coordinates[i])
             }
-            if(this.properties.draw_type == "stroke" ) this.ctx.stroke()
+            if(this.properties.draw_style == "stroke" ) this.ctx.stroke()
             else this.ctx.fill()
             this.ctx.beginPath()      
     }
@@ -68,20 +69,7 @@ class Polygon extends VisualElement {
         this.angles = this.getAngles();
         this.points = this.getPoints();
         this.draw();
-    }
-    private changeColor(element : VisualElement, color : string) {
-        if(isRGBColor(color)) {
-            this.properties.color = color;
-            this.ctx.strokeStyle = color;
-            this.clear();
-            this.draw();
-        }
-    }
-    private changeOpacity(element : VisualElement, new_opacity : number) {
-        this.properties.opacity = new_opacity;
-        this.ctx.globalAlpha = this.properties.opacity
-        this.draw();
-    }
+    } 
     private linearRadiusTo(element : VisualElement, start_frame : number, duration : number, new_radius : number) {
         const radiusChangeFrames = getTransformFrames(this.properties.radius!, new_radius, duration);
         let frame = Animation.at(start_frame);
@@ -97,32 +85,6 @@ class Polygon extends VisualElement {
             frame.doAction(this, "changeRotationTo", rotationChangeFrames[i]);
             frame = frame.getNextFrame();
         }
-    }
-    private linearChangeColorTo(element : VisualElement, start_frame : number,  duration : number, new_color : string, type : string = "RGB") {
-        if(this.properties.gradient_enabled) return;
-        let current_frame = Animation.at(start_frame).getNextFrame();
-        let color_frames : [number, number, number][] = [];
-        let old_color = "";
-        if(this.properties.draw_type == "stroke" ) old_color = this.properties.stroke_color!;
-        else old_color = this.properties.stroke_color!
-        if(type == "RGB") {
-            let start_color = StringToRGBTuple(old_color);
-            let end_color = StringToRGBTuple(new_color);
-            color_frames = RGBTransfromFrames(start_color, end_color, duration);
-        }
-        else if(type == "HSL") {
-            let start_color = RGBToHSL(old_color);
-            let end_color = RGBToHSL(new_color);
-            color_frames = HSLTransfromFrames(start_color, end_color, duration);
-            color_frames = color_frames.map(color_frame => HSLToRGB(...color_frame));
-        }
-        for(let color_frame of color_frames) {
-            current_frame.doAction(this, 'changeColor', RGBTupleToString(color_frame));
-            current_frame = current_frame.getNextFrame();
-        }
-    }
-    private linearChangeOpacity(element : VisualElement, start_frame : number, duration : number, new_opacity : number) {
-        VisualElement.linearChangeEvent(this, start_frame, duration, {"opacity" : [this.properties, new_opacity, "changeOpacity"]});
     }
 }
 

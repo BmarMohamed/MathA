@@ -1,24 +1,14 @@
+import RGB from "./classes/colors/rgb.class.js";
+import HSL from "./classes/colors/hsl.class.js";
+import HSB from "./classes/colors/hsb.class.js";
+import IColor from "./interfaces/color.interface.js";
+
 const Colors = {
-//Check==========================================================================================================
-  isRGBColor(rgb_color : string) {
-        return /^#(([0-9a-fA-F]{2}){3,4}|([0-9a-fA-F]){3,4})$/.test(rgb_color);
-  },
-  isHSLColor(hsl_color : [number, number, number]) {
-        if(
-            hsl_color[0] >= 0 && 
-            hsl_color[0] <= 360 && 
-            hsl_color[1] >= 0 && 
-            hsl_color[1] <= 100 && 
-            hsl_color[2] >= 0 && 
-            hsl_color[2] <= 100
-        ) return true;
-        return false;
-  },
 //Convert==========================================================================================================
-  RGBToHSL(color : string) : [number, number, number] {
-        const r = Number.parseInt(color.slice(1, 3), 16) / 255;
-        const g = Number.parseInt(color.slice(3, 5), 16) / 255;
-        const b = Number.parseInt(color.slice(5, 7), 16) / 255;
+  RGBToHSL(color : RGB) : HSL {
+        const r = color.getColor().red / 255;
+        const g = color.getColor().green / 255;
+        const b = color.getColor().blue / 255;
         const l = Math.max(r, g, b);
         const s = l - Math.min(r, g, b);
         const h = s
@@ -28,68 +18,95 @@ const Colors = {
             ? 2 + (b - r) / s
             : 4 + (r - g) / s
           : 0;
-        return [
-          60 * h < 0 ? 60 * h + 360 : 60 * h,
-          100 * (s ? (l <= 0.5 ? s / (2 * l - s) : s / (2 - (2 * l - s))) : 0),
-          (100 * (2 * l - s)) / 2,
-        ];
+        return new HSL(
+          ...[
+            Math.round(60 * h < 0 ? 60 * h + 360 : 60 * h),
+            Math.round(100 * (s ? (l <= 0.5 ? s / (2 * l - s) : s / (2 - (2 * l - s))) : 0)),
+            Math.round((100 * (2 * l - s)) / 2),
+          ]  as [number, number, number]
+        );
   },
-  HSLToRGB(h : number, s : number, l : number) : [number, number, number] {
-        s /= 100;
-        l /= 100;
-        const k = (n : number) => (n + h / 30) % 12;
+  HSLToRGB(color : HSL) : RGB {
+        const s = color.getColor().saturation / 100;
+        const l = color.getColor().lightness / 100;
+        const k = (n : number) => (n + color.getColor().hue / 30) % 12;
         const a = s * Math.min(l, 1 - l);
         const f = (n : number) =>
           l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-        return [Math.round(255 * f(0)), Math.round(255 * f(8)), Math.round(255 * f(4))];
+        return new RGB(...[Math.round(255 * f(0)), Math.round(255 * f(8)), Math.round(255 * f(4))] as [number, number, number]);
   },
-  RGBTupleToString(rgb_color : [number, number, number]) {
-        return `#
-          ${rgb_color[0].toString(16).length == 1? '0' + rgb_color[0].toString(16) : rgb_color[0].toString(16)} 
-          ${rgb_color[1].toString(16).length == 1? '0' + rgb_color[1].toString(16) : rgb_color[1].toString(16)}
-          ${rgb_color[2].toString(16).length == 1? '0' + rgb_color[2].toString(16) : rgb_color[2].toString(16)}
-        `.replace(/(\s|\t)/g, "");
+  RGBToHSB(color : RGB) : HSB {
+      const r = color.getColor().red / 255;
+      const g = color.getColor().green / 255;
+      const b = color.getColor().blue / 255;
+      const v = Math.max(r, g, b),
+        n = v - Math.min(r, g, b);
+      const h =
+        n === 0 ? 0 : n && v === r ? (g - b) / n : v === g ? 2 + (b - r) / n : 4 + (r - g) / n;
+      return new HSB(...[Math.round(60 * (h < 0 ? h + 6 : h)),Math.round( v && (n / v) * 100),Math.round( v * 100)] as [number, number, number]);
   },
-  StringToRGBTuple(rgb_color : string) : [number, number, number]{
-        return [
-          Number.parseInt(rgb_color.slice(1, 3), 16),
-          Number.parseInt(rgb_color.slice(3, 5), 16),
-          Number.parseInt(rgb_color.slice(5, 7), 16),
-        ]
+  HSBToRGB(color : HSB) : RGB {
+    const s = color.getColor().saturation / 100;
+    const v = color.getColor().brightness / 100;
+    const k = (n : number) => (n + color.getColor().hue / 60) % 6;
+    const f = (n : number) => v * (1 - s * Math.max(0, Math.min(k(n), 4 - k(n), 1)));
+    return new RGB(...[Math.round(255 * f(5)),Math.round( 255 * f(3)),Math.round( 255 * f(1))] as [number, number, number]);
   },
-//Frames============================================================================================================
-  HSLTransfromFrames(from : [number, number, number], to : [number, number, number], duration : number) {
-        const dHSL = {
-            dh : (to[0] - from[0]) / duration,
-            ds : (to[1] - from[1]) / duration,
-            dl : (to[2] - from[2]) / duration,
-        }
-        const frames : [number, number, number][] = []
-        for(let i = 1; i <= duration; i++) {
-            frames.push([
-                from[0] + (dHSL.dh * i),
-                from[1] + (dHSL.ds * i),
-                from[2] + (dHSL.dl * i),
-            ])
-        }
-        return frames
+  HSLToHSB(color : HSL) : HSB {
+    return this.RGBToHSB(this.HSLToRGB(color))
   },
-  RGBTransfromFrames(from : [number, number, number], to : [number, number, number], duration : number) {
-      const dRGB = {
-          dr : (to[0] - from[0]) / duration,
-          dg : (to[1] - from[1]) / duration,
-          db : (to[2] - from[2]) / duration,
-      }
-      const frames : [number, number, number][] = []
-      for(let i = 1; i <= duration; i++) {
-          frames.push([
-              from[0] + (dRGB.dr * i),
-              from[1] + (dRGB.dg * i),
-              from[2] + (dRGB.db * i),
-          ])
-      }
-      return frames
+  HSBToHSL(color : HSB) : HSL {
+    return this.RGBToHSL(this.HSBToRGB(color));
+  },
+  ColorToHex(color : IColor) : string {
+    let rgb : RGB;
+    if(color instanceof HSB) rgb = this.HSBToRGB(color);
+    else if(color instanceof HSL) rgb = this.HSLToRGB(color);
+    else rgb = color as RGB;
+    return `#${rgb.getColor().red.toString(16)}${rgb.getColor().green.toString(16)}${rgb.getColor().blue.toString(16)}`;
+  },
+  HexToColor(hex : string, color_model : "RGB" | "HSB" | "HSL") : IColor {
+    let red = Number.parseInt(hex[1] + hex[2], 16);
+    let green = Number.parseInt(hex[3] + hex[4], 16);
+    let blue = Number.parseInt(hex[5] + hex[6], 16);
+    
+    if(color_model == "RGB") return new RGB(red, green, blue);
+    else if(color_model == "HSB") return this.RGBToHSB(new RGB(red, green, blue));
+    else return this.RGBToHSL(new RGB(red, green, blue));
   }
+//Frames============================================================================================================
+  // HSLTransfromFrames(from : [number, number, number], to : [number, number, number], duration : number) {
+  //       const dHSL = {
+  //           dh : (to[0] - from[0]) / duration,
+  //           ds : (to[1] - from[1]) / duration,
+  //           dl : (to[2] - from[2]) / duration,
+  //       }
+  //       const frames : [number, number, number][] = []
+  //       for(let i = 1; i <= duration; i++) {
+  //           frames.push([
+  //               from[0] + (dHSL.dh * i),
+  //               from[1] + (dHSL.ds * i),
+  //               from[2] + (dHSL.dl * i),
+  //           ])
+  //       }
+  //       return frames
+  // },
+  // RGBTransfromFrames(from : [number, number, number], to : [number, number, number], duration : number) {
+  //     const dRGB = {
+  //         dr : (to[0] - from[0]) / duration,
+  //         dg : (to[1] - from[1]) / duration,
+  //         db : (to[2] - from[2]) / duration,
+  //     }
+  //     const frames : [number, number, number][] = []
+  //     for(let i = 1; i <= duration; i++) {
+  //         frames.push([
+  //             from[0] + (dRGB.dr * i),
+  //             from[1] + (dRGB.dg * i),
+  //             from[2] + (dRGB.db * i),
+  //         ])
+  //     }
+  //     return frames
+  // }
 }
 
-export default Colors
+export default Colors;

@@ -4,7 +4,7 @@ import {
     IFill, 
     ILine, 
     IStroke, 
-    IDrawType, 
+    IDrawStyle, 
     IGradientColors, 
     IPolygonElement,
     ILineElement,
@@ -48,14 +48,14 @@ const Fill : IFill = {
     ...Opacity,
     fill_color : "#ffffff",
 }
-const DrawType : IDrawType = {
+const DrawStyle : IDrawStyle = {
     ...Stroke,
     ...Fill,
-    draw_type : "stroke",
+    draw_style : "stroke",
 }
 export const DefaultPolygonProperties : IPolygonElement = {
     ...Render,
-    ...DrawType,
+    ...DrawStyle,
     radius : 1,
     angles : 120,
     rotation : 0,
@@ -77,17 +77,17 @@ export const DefaultGraphProperties : IGraphElement = {
 }
 export const DefaultPointsProperties : IPointsElement = {
     ...Render,
-    ...DrawType,
+    ...DrawStyle,
     points : [[0,0]],
     radius : 1,
 }
 export const DefaultPathProperties : IPathElement = {
     ...Render,
-    ...DrawType,
+    ...DrawStyle,
     points : [],
 }
 export const DefaultTextProperties : ITextElement = {
-    ...DrawType,
+    ...DrawStyle,
     ...Render,
     font_size : 16,
     max_width : 8,
