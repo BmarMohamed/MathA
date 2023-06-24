@@ -26,7 +26,7 @@ class Frame {
         this.actions.push({
             element, 
             event, 
-            params : [this.id, ...params]
+            params : [element, this.id, ...params]
         })
         return this;
     }
@@ -34,7 +34,7 @@ class Frame {
         this.actions.push({
             element, 
             event, 
-            params : [...params]
+            params : [element, ...params]
         })
         return this;
     }

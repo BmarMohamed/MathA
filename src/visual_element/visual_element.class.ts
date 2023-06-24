@@ -1,6 +1,7 @@
 import Animation from "../animation.class.js";
 import { Render } from "./default_properties.object.js";
 import Lib from "../lib/lib.js";
+import Events from "./properties_functions/event.js";
 const { getTransformFrames } = Lib.Animation;
 
 class VisualElement {
@@ -12,7 +13,7 @@ class VisualElement {
 
     private static visual_element_id = 0;
     protected id! : number; 
-    protected canvas! :  HTMLCanvasElement;
+    public canvas! :  HTMLCanvasElement;
     protected ctx! : CanvasRenderingContext2D;
     protected isVisible! : boolean;
 
@@ -65,7 +66,11 @@ class VisualElement {
             (this.properties.range[1] - y) * this.properties.height / (this.properties.range[1] - this.properties.range[0]),
         ]
     }
-    protected linearChangeEvenet(start_frame : number, duration : number, properties : Record<string, [any, any, string]>) {
+    protected initializeEvents(events_objects : Events[]) {
+        for(let events of events_objects)
+            for(let event in events) this[event] = events[event];
+    }
+    public static linearChangeEvent(element : VisualElement, start_frame : number, duration : number, properties : Record<string, [any, any, string]>) {
         const ChangeFrames : Record<string, any> = {};
         for(let property in properties) {
             ChangeFrames[property] = getTransformFrames(properties[property][0][property], properties[property][1], duration);
@@ -73,7 +78,7 @@ class VisualElement {
         let frame = Animation.at(start_frame);
         for(let i = 0; i <= duration; i++) {
             for(let property in ChangeFrames) {
-                frame.doAction(this, properties[property][2], ChangeFrames[property][i]);
+                frame.doAction(element, properties[property][2], ChangeFrames[property][i]);
             }
             frame = frame.getNextFrame();
         }

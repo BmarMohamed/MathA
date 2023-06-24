@@ -9,9 +9,9 @@ import Text from "./visual_element/elements/text.class.js";
 export default {
     Animation,
     Polygon,
-    Line,
-    Graph,
-    Points,
-    Path,
-    Text,
+    // Line,
+    // Graph,
+    // Points,
+    // Path,
+    // Text,
 }

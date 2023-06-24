@@ -2,6 +2,7 @@ import { IPolygonElement } from "../properties.interface.js";
 import { DefaultPolygonProperties } from "../default_properties.object.js";
 import VisualElement from "../visual_element.class.js";
 import Animation from "../../animation.class.js";
+import RenderEvents from "../properties_functions/render.event.js";
 import Lib from "../../lib/lib.js"
 
 const { pi } = Lib.Constants;
@@ -13,8 +14,8 @@ class Polygon extends VisualElement {
     constructor(properties : IPolygonElement) {
         super();
         this.initializeProperties<IPolygonElement>(properties, DefaultPolygonProperties);
+        this.initializeEvents([RenderEvents]);
         this.applyStyles();
-
         this.angles = this.getAngles();
         this.points = this.getPoints()
     }
@@ -57,18 +58,18 @@ class Polygon extends VisualElement {
             else this.ctx.fill()
             this.ctx.beginPath()      
     }
-    private changeRadiusTo(new_radius : number) {
+    private changeRadiusTo(element : VisualElement, new_radius : number) {
         this.properties.radius = new_radius;
         this.points = this.getPoints();
         this.draw();
     }
-    private changeRotationTo(new_rotation : number) {
+    private changeRotationTo(element : VisualElement, new_rotation : number) {
         this.properties.rotation = new_rotation;
         this.angles = this.getAngles();
         this.points = this.getPoints();
         this.draw();
     }
-    private changeColor(color : string) {
+    private changeColor(element : VisualElement, color : string) {
         if(isRGBColor(color)) {
             this.properties.color = color;
             this.ctx.strokeStyle = color;
@@ -76,12 +77,12 @@ class Polygon extends VisualElement {
             this.draw();
         }
     }
-    private changeOpacity(new_opacity : number) {
+    private changeOpacity(element : VisualElement, new_opacity : number) {
         this.properties.opacity = new_opacity;
         this.ctx.globalAlpha = this.properties.opacity
         this.draw();
     }
-    private linearRadiusTo(start_frame : number, duration : number, new_radius : number) {
+    private linearRadiusTo(element : VisualElement, start_frame : number, duration : number, new_radius : number) {
         const radiusChangeFrames = getTransformFrames(this.properties.radius!, new_radius, duration);
         let frame = Animation.at(start_frame);
         for(let i = 0; i <= duration; i++) {
@@ -89,7 +90,7 @@ class Polygon extends VisualElement {
             frame = frame.getNextFrame();
         }
     }
-    private linearRotationBy(start_frame : number, duration : number, rotation : number) {
+    private linearRotationBy(element : VisualElement, start_frame : number, duration : number, rotation : number) {
         const rotationChangeFrames = getTransformFrames(this.properties.rotation!, this.properties.rotation! + rotation, duration);
         let frame = Animation.at(start_frame);
         for(let i = 0; i <= duration; i++) {
@@ -97,7 +98,7 @@ class Polygon extends VisualElement {
             frame = frame.getNextFrame();
         }
     }
-    private linearChangeColorTo(start_frame : number,  duration : number, new_color : string, type : string = "RGB") {
+    private linearChangeColorTo(element : VisualElement, start_frame : number,  duration : number, new_color : string, type : string = "RGB") {
         if(this.properties.gradient_enabled) return;
         let current_frame = Animation.at(start_frame).getNextFrame();
         let color_frames : [number, number, number][] = [];
@@ -120,8 +121,8 @@ class Polygon extends VisualElement {
             current_frame = current_frame.getNextFrame();
         }
     }
-    private linearChangeOpacity(start_frame : number, duration : number, new_opacity : number) {
-        this.linearChangeEvenet(start_frame, duration, {"opacity" : [this.properties, new_opacity, "changeOpacity"]});
+    private linearChangeOpacity(element : VisualElement, start_frame : number, duration : number, new_opacity : number) {
+        VisualElement.linearChangeEvent(this, start_frame, duration, {"opacity" : [this.properties, new_opacity, "changeOpacity"]});
     }
 }
 
