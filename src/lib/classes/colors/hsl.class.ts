@@ -1,4 +1,5 @@
 import IColor from "../../interfaces/color.interface";
+import Colors from "../../colors.lib.js";
 
 class HSL implements IColor {
     constructor(hue : number, saturation : number, lightness : number) {
@@ -13,7 +14,7 @@ class HSL implements IColor {
         this.hue = hue;
         this.saturation = saturation;
         this.lightness = lightness;
-        // this.color = this.getHex(); 
+        this.color = Colors.ColorToHex(this); 
     }
     getColor() {
         return {
@@ -22,13 +23,9 @@ class HSL implements IColor {
             lightness : this.lightness,
         }
     }
-    // getHex() {
-    //     return `#
-    //         ${this.hue.toString(16)} 
-    //         ${this.saturation.toString(16)}
-    //         ${this.lightness.toString(16)}
-    //     `.replace(/(\s|\t)/g, "");        
-    // }
+    getColorArray() {
+        return [this.hue, this.saturation, this.lightness];
+    }
 }
 
 export default HSL;

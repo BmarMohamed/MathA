@@ -1,4 +1,5 @@
 import IColor from "../../interfaces/color.interface";
+import Colors from "../../colors.lib.js";
 
 class RGB implements IColor {
     constructor(red : number, green : number, blue : number) {
@@ -13,7 +14,7 @@ class RGB implements IColor {
         this.red = red;
         this.green = green;
         this.blue = blue;
-        this.color = this.getHex(); 
+        this.color = Colors.ColorToHex(this); 
     }
     getColor() {
         return {
@@ -22,12 +23,8 @@ class RGB implements IColor {
             blue : this.blue,
         }
     }
-    getHex() {
-        return `#
-            ${this.red.toString(16)} 
-            ${this.green.toString(16)}
-            ${this.blue.toString(16)}
-        `.replace(/(\s|\t)/g, "");        
+    getColorArray() {
+        return [this.red, this.green, this.blue];
     }
 }
 
