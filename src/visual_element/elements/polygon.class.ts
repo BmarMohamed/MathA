@@ -59,7 +59,7 @@ class Polygon extends VisualElement {
             else this.ctx.fill()
             this.ctx.beginPath()      
     }
-    private changeRadiusTo(element : VisualElement, new_radius : number) {
+    private changeRadius(element : VisualElement, new_radius : number) {
         this.properties.radius = new_radius;
         this.points = this.getPoints();
         this.draw();
@@ -70,13 +70,8 @@ class Polygon extends VisualElement {
         this.points = this.getPoints();
         this.draw();
     } 
-    private linearRadiusTo(element : VisualElement, start_frame : number, duration : number, new_radius : number) {
-        const radiusChangeFrames = getTransformFrames(this.properties.radius!, new_radius, duration);
-        let frame = Animation.at(start_frame);
-        for(let i = 0; i <= duration; i++) {
-            frame.doAction(this, "changeRadiusTo", radiusChangeFrames[i]);
-            frame = frame.getNextFrame();
-        }
+    private linearChangeRadius(element : VisualElement, start_frame : number, duration : number, new_radius : number) {
+        VisualElement.linearChangeEvent(element, start_frame, duration, {"radius" : [element.properties, new_radius, "changeRadius"]})
     }
     private linearRotationBy(element : VisualElement, start_frame : number, duration : number, rotation : number) {
         const rotationChangeFrames = getTransformFrames(this.properties.rotation!, this.properties.rotation! + rotation, duration);

@@ -1,5 +1,6 @@
 import VisualElement from "../visual_element.class.js";
 import OpacityEvents from "./opacity.event.js";
+import LineEvents from "./line.event.js";
 import Events from "./event.js";
 import Lib from "../../lib/lib.js";
 import IColor from "../../lib/interfaces/color.interface.js";
@@ -12,6 +13,7 @@ const { getTransformFrames } = Lib.Animation;
 
 const StrokeEvents : Events = {
     ...OpacityEvents,
+    ...LineEvents,
     changeStrokeColor(element : VisualElement, new_color : string) {
         element.ctx.strokeStyle = new_color;
         element.draw();
