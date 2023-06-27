@@ -3,6 +3,7 @@ import { Render } from "./default_properties.object.js";
 import Lib from "../lib/lib.js";
 import Events from "./events/event.js";
 const { getTransformFrames } = Lib.Animation;
+const { Multiply2By2Matrics } = Lib.Arrays;
 
 class VisualElement {
     [key : string] : any;
@@ -10,13 +11,11 @@ class VisualElement {
         this.id = VisualElement.visual_element_id++;
         this.initialize();
     }
-
     private static visual_element_id = 0;
     protected id! : number; 
     public canvas! :  HTMLCanvasElement;
     public ctx! : CanvasRenderingContext2D;
     protected isVisible! : boolean;
-
     private initialize() {
         this.canvas = document.createElement("canvas");
         this.canvas.id = `@__VisualElement${this.id}__@`;
@@ -61,6 +60,9 @@ class VisualElement {
         }
     }
     protected getCoordinatesOf(x : number, y : number) : [number, number] {
+        const result_matrix = Multiply2By2Matrics(this.properties.transform_matrix, [[x, y], [0, 0]])
+        x = result_matrix[0][0];
+        y = result_matrix[0][1];
         return [
             (x - this.properties.domain[0]) * this.properties.width / (this.properties.domain[1] - this.properties.domain[0]),
             (this.properties.range[1] - y) * this.properties.height / (this.properties.range[1] - this.properties.range[0]),

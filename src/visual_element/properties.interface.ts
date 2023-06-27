@@ -5,6 +5,7 @@ interface IRender {
     domain? : [number, number],
     range? : [number, number],
     position? : [number, number],
+    transform_matrix? : [[number, number], [number, number]],
     origin? : [number, number],
 }
 interface IGradientColors {

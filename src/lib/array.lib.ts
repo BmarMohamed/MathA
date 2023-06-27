@@ -14,7 +14,6 @@ const Arrays = {
         }
         return arr;
     },
-
     PopRandomElementFromArray<T>(arr : T[]) : T {
         const random_index = Math.floor(Math.random() * arr.length);
         const random_element = arr[random_index];
@@ -22,6 +21,18 @@ const Arrays = {
         arr.shift();
         return random_element;
     },
+    Multiply2By2Matrics(matrix1 : [[number, number], [number, number]], matrix2 : [[number, number], [number, number]]) {
+        return [
+            [
+                matrix1[0][0] * matrix2[0][0] + matrix1[1][0] * matrix2[0][1],
+                matrix1[0][1] * matrix2[0][0] + matrix1[1][1] * matrix2[0][1]
+            ],
+            [
+                matrix1[0][0] * matrix2[1][0] + matrix1[1][0] * matrix2[1][1],
+                matrix1[0][1] * matrix2[1][0] + matrix1[1][1] * matrix2[1][1]
+            ]
+        ]
+    }
 }
 
 export default Arrays;

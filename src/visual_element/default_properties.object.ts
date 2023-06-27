@@ -21,6 +21,7 @@ export const Render : IRender = {
     range : [-4.5, 4.5],
     position : [0, 0],
     origin : [0, 0],
+    transform_matrix : [[1, 0], [0, 1]],
 }
 const GradientColors : IGradientColors = {
     gradient_start_position : [-8, -4.5],
