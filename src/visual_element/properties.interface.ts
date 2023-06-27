@@ -6,7 +6,6 @@ interface IRender {
     range? : [number, number],
     position? : [number, number],
     transform_matrix? : [[number, number], [number, number]],
-    origin? : [number, number],
 }
 interface IGradientColors {
     gradient_start_position? : [number, number];
@@ -41,6 +40,7 @@ export interface IPolygonElement extends IRender , IDrawStyle {
     radius? : number;
     angles? : number[] | number;
     rotation? : number;
+    center? : [number, number];
 }
 export interface ILineElement extends IRender, IStroke {
     from? : [number, number],

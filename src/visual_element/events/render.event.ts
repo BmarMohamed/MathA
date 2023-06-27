@@ -32,11 +32,6 @@ const RenderEvents : Events = {
         if(funcs) for(let i = 0; i < funcs!.length; i++) element[funcs![i]](...parameters![i]);
         element.draw();
     },
-    changeOrigin(element : VisualElement, new_origin : [number, number], funcs? : string[], parameters? : any[][]) {
-        element.properties.range = new_origin;
-        if(funcs) for(let i = 0; i < funcs!.length; i++) element[funcs![i]](...parameters![i]);
-        element.draw();
-    },
     changeTransformMatrix(element : VisualElement, matrix : [[number, number], [number, number]]) {
         element.properties.transform_matrix = matrix;
         element.draw();
@@ -59,9 +54,6 @@ const RenderEvents : Events = {
     },
     linearChangePosition(element : VisualElement, start_frame : number, duration : number, new_position : [number, number]) {
         VisualElement.linearChangeEvent(element, start_frame, duration, {"position" : [element.properties, new_position, "changePosition"]})
-    },
-    linearChangeOrigin(element : VisualElement, start_frame : number, duration : number, new_origin : [number, number]) {
-        VisualElement.linearChangeEvent(element, start_frame, duration, {"origin" : [element.properties, new_origin, "changeOrigin"]})
     },
     linearChangeTransformMatrix(element : VisualElement, start_frame : number, duration : number, new_transform_matrix : [[number, number], [number, number]]) {
         const transform_matrix_i_transform_frames = getTransformFrames(element.properties.transform_matrix[0], new_transform_matrix[0], duration);

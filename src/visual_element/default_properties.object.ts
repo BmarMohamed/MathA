@@ -20,7 +20,6 @@ export const Render : IRender = {
     domain : [-8 , 8],
     range : [-4.5, 4.5],
     position : [0, 0],
-    origin : [0, 0],
     transform_matrix : [[1, 0], [0, 1]],
 }
 const GradientColors : IGradientColors = {
@@ -60,6 +59,7 @@ export const DefaultPolygonProperties : IPolygonElement = {
     radius : 1,
     angles : 120,
     rotation : 0,
+    center : [0, 0],
 }
 export const DefaultLineProperties : ILineElement = {
     ...Render,

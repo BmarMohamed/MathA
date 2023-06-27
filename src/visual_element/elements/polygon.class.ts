@@ -20,7 +20,6 @@ class Polygon extends VisualElement {
         this.angles = this.getAngles();
         this.points = this.getPoints()
     }
-
     private properties! : IPolygonElement;
     private angles! : number[];
     private points! : [number,number][];
@@ -42,7 +41,7 @@ class Polygon extends VisualElement {
         const points : [number, number][] = [];
         for(let i = 0; i < this.angles.length; i++) {
             let angle = pi - this.angles[i];
-            points.push([this.properties.origin![0] - this.properties.radius! * cos(angle), this.properties.origin![0] + this.properties.radius! * sin(angle)])
+            points.push([this.properties.center![0] - this.properties.radius! * cos(angle), this.properties.center![0] + this.properties.radius! * sin(angle)])
         }
         return points;
     }
