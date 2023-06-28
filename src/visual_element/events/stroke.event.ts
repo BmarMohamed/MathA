@@ -8,6 +8,7 @@ import RGB from "../../lib/classes/colors/rgb.class.js";
 import HSB from "../../lib/classes/colors/hsb.class.js";
 import HSL from "../../lib/classes/colors/hsl.class.js";
 import Animation from "../../animation.class.js";
+import GradientEvents from "./gradient.event.js";
 import { AddEvents } from "./event.js";
 const { HexToColor} = Lib.Colors;
 const { getTransformFrames } = Lib.Animation;
@@ -39,5 +40,6 @@ const StrokeEvents : Events = {
 
 AddEvents(StrokeEvents, OpacityEvents);
 AddEvents(StrokeEvents, LineEvents);
+AddEvents(StrokeEvents, GradientEvents);
 
 export default StrokeEvents;

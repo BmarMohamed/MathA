@@ -40,7 +40,7 @@ class VisualElement {
         if(this.properties.fill_color) this.ctx.fillStyle = this.properties.fill_color!;
         if(this.properties.line_width) this.ctx.lineWidth = this.properties.line_width!;
         if(this.properties.position) this.ctx.translate(this.properties.position![0], this.properties.position![1]);
-        if(this.properties.gradient_enabled) {
+        if(this.properties.gradient_colors) {
             const gradient = this.ctx.createLinearGradient(
                 ...this.getCoordinatesOf(...this.properties.gradient_start_position! as [number, number]),
                 ...this.getCoordinatesOf(...this.properties.gradient_end_position! as [number, number])
@@ -48,8 +48,8 @@ class VisualElement {
             for(const color in this.properties.gradient_colors!) {
                 gradient.addColorStop(this.properties.gradient_colors![color], color)
             }
-            this.ctx.strokeStyle = gradient;
-            this.ctx.fillStyle = gradient;
+            if(this.properties.apply_gradient_on == "stroke" || this.properties.apply_gradient_on == "both") this.ctx.strokeStyle = gradient;
+            if(this.properties.apply_gradient_on == "fill" || this.properties.apply_gradient_on == "both") this.ctx.fillStyle = gradient;
         }
         if(this.properties.opacity) this.ctx.globalAlpha = this.properties.opacity!;
         if(this.properties.text) {
@@ -59,7 +59,7 @@ class VisualElement {
             this.ctx.direction = this.properties.text_direction!;
         }
     }
-    protected getCoordinatesOf(x : number, y : number) : [number, number] {
+    public getCoordinatesOf(x : number, y : number) : [number, number] {
         const result_matrix = Multiply2By2Matrics(this.properties.transform_matrix, [[x, y], [0, 0]])
         x = result_matrix[0][0];
         y = result_matrix[0][1];

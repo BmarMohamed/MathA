@@ -29,7 +29,7 @@ const GradientColors : IGradientColors = {
         "#000000" : 0,
         "#ffffff" : 1,
     },
-    gradient_enabled : false,
+    apply_gradient_on : "none",
 }
 const Opacity : IOpacity = {
     opacity : 1,

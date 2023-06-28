@@ -11,8 +11,8 @@ interface IGradientColors {
     gradient_start_position? : [number, number];
     gradient_end_position? : [number, number];
     gradient_colors? : Record<string, number>;
-    gradient_enabled? :boolean,
-}
+    apply_gradient_on? : "stroke" | "fill" | "both" | "none",
+} 
 interface IOpacity {
     opacity? : number;
 }

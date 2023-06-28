@@ -8,6 +8,7 @@ import HSB from "../../lib/classes/colors/hsb.class.js";
 import HSL from "../../lib/classes/colors/hsl.class.js";
 import Animation from "../../animation.class.js";
 import { AddEvents } from "./event.js";
+import GradientEvents from "./gradient.event.js";
 const { HexToColor} = Lib.Colors;
 const { getTransformFrames } = Lib.Animation;
 
@@ -36,6 +37,7 @@ const FillEvents : Events = {
     },
 }
 
-AddEvents(FillEvents, OpacityEvents)
+AddEvents(FillEvents, OpacityEvents);
+AddEvents(FillEvents, GradientEvents);
 
 export default FillEvents;
