@@ -49,25 +49,38 @@ class Polygon extends VisualElement {
         this.clear()
         const coordinates : [number, number][] = [];
         for(let point of this.points) coordinates.push(this.getCoordinatesOf(...point) as [number, number])
-            this.ctx.beginPath();
-            this.ctx.moveTo(...coordinates[0])
-            for(let i = 1; i < coordinates.length - 1; i++) {
-                this.ctx.lineTo(...coordinates[i])
-            }
-            if(this.properties.draw_style == "stroke" ) this.ctx.stroke()
-            else this.ctx.fill()
-            this.ctx.beginPath()      
+        if(this.properties.draw_style == "fill" || this.properties.draw_style == "both") this.fill(coordinates);
+        if(this.properties.draw_style == "stroke" || this.properties.draw_style == "both") this.stroke(coordinates);
+    }
+    private stroke(coordinates : [number, number][]) {
+        this.ctx.beginPath();
+        this.ctx.moveTo(...coordinates[0])
+        for(let i = 1; i < coordinates.length - 1; i++) {
+            this.ctx.lineTo(...coordinates[i])
+        }
+        this.ctx.stroke()
+    }
+    private fill(coordinates : [number, number][]) {
+        this.ctx.beginPath();
+        this.ctx.moveTo(...coordinates[0])
+        for(let i = 1; i < coordinates.length - 1; i++) {
+            this.ctx.lineTo(...coordinates[i])
+        }
+        this.ctx.fill()
+    }
+    private changeAngles(element : VisualElement, angles : number | number[]) {
+        this.properties.angles = angles;
+        this.angles = this.getAngles();
+        this.points = this.getPoints()
     }
     private changeRadius(element : VisualElement, new_radius : number) {
         this.properties.radius = new_radius;
         this.points = this.getPoints();
-        this.draw();
     }
     private changeRotationTo(element : VisualElement, new_rotation : number) {
         this.properties.rotation = new_rotation;
         this.angles = this.getAngles();
         this.points = this.getPoints();
-        this.draw();
     } 
     private linearChangeRadius(element : VisualElement, start_frame : number, duration : number, new_radius : number) {
         VisualElement.linearChangeEvent(element, start_frame, duration, {"radius" : [element.properties, new_radius, "changeRadius"]})

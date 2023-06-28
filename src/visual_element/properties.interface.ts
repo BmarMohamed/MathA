@@ -26,7 +26,7 @@ interface IFill extends IGradientColors, IOpacity {
     fill_color? : string;
 }
 interface IDrawStyle extends IFill, IStroke {
-    draw_style? : "stroke" | "fill";
+    draw_style? : "stroke" | "fill" | "both";
 }
 interface IFont extends IDrawStyle {
     font_size? : number,

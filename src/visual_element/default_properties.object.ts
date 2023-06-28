@@ -51,7 +51,7 @@ const Fill : IFill = {
 const DrawStyle : IDrawStyle = {
     ...Stroke,
     ...Fill,
-    draw_style : "stroke",
+    draw_style : "both",
 }
 export const DefaultPolygonProperties : IPolygonElement = {
     ...Render,

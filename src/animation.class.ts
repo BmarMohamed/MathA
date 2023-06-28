@@ -38,6 +38,11 @@ class Frame {
         })
         return this;
     }
+    public prepare() {
+        let elements : Set<VisualElement> = new Set();
+        for(let action of this.actions) elements.add(action.element);
+        for(let element of elements) this.doAction(element, "draw");
+    }
     public execute() {
         for(const action of this.actions) {
             action.element[action.event](...action.params);
@@ -118,6 +123,7 @@ class Animation {
     public static start() {
         let frame = this.at(0)
         const interval = setInterval(() => {
+            frame.prepare();
             frame.execute();
             if(frame !== frame.getNextFrame()) frame = frame.getNextFrame();
             else clearInterval(interval);

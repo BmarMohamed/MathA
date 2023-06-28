@@ -6,7 +6,6 @@ const OpacityEvents : Events = {
         element.properties.opacity = new_opacity;
         element.ctx.globalAlpha = new_opacity;
         if(funcs) for(let i = 0; i < funcs!.length; i++) element[funcs![i]](...parameters![i]);
-        element.draw();
     },
     linearChangeOpacity(element : VisualElement, start_frame : number, duration : number, new_opacity : number) {
         VisualElement.linearChangeEvent(element, start_frame, duration, {"opacity" : [element.properties, new_opacity, "changeOpacity"]})
