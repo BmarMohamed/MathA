@@ -3,7 +3,7 @@ import { Render } from "./default_properties.object.js";
 import Lib from "../lib/lib.js";
 import Events from "./events/event.js";
 const { getTransformFrames } = Lib.Animation;
-const { Multiply2By2Matrics } = Lib.Arrays;
+const { Multiply2By2Matrics, findIndexOf } = Lib.Arrays;
 
 class VisualElement {
     [key : string] : any;
@@ -34,6 +34,37 @@ class VisualElement {
         this.properties.height = Render.height;
         this.properties.width = Render.width;
         for(let property in properties) this.properties[property] = properties[property];
+        this.properties_change_record = new Map();
+        for(let property in this.properties) this.properties_change_record.set(property, [0]);
+        this.properties_values_record = new Map([[0, this.properties]]);
+    }
+    protected initializeEvents(events_objects : Events[]) {
+        for(let events of events_objects)
+            for(let event in events) this[event] = events[event];
+    }
+    public addPropertyChangeToRecords(element : VisualElement, frame : number, property : string, value : any) {
+        element.properties_change_record.get(property)!.push(frame);
+        if(!element.properties_values_record.has(frame))
+            element.properties_values_record.set(frame, {})
+        element.properties_values_record.get(frame)![property] = value;
+    }
+    protected getPropertiesAt(frame : number) {
+        const properties : {[key : string] : any} = {};
+        for(let property in this.properties) {
+            const property_change_array = this.properties_change_record.get(property)! as number[];
+            let current_frame = findIndexOf(frame, property_change_array);
+            properties[property] = this.properties_values_record.get(current_frame)[property];
+        }
+        return properties;
+    }
+    public getCoordinatesOf(x : number, y : number) : [number, number] {
+        const result_matrix = Multiply2By2Matrics(this.properties.transform_matrix, [[x, y], [0, 0]])
+        x = result_matrix[0][0];
+        y = result_matrix[0][1];
+        return [
+            (x - this.properties.domain[0]) * this.properties.width / (this.properties.domain[1] - this.properties.domain[0]),
+            (this.properties.range[1] - y) * this.properties.height / (this.properties.range[1] - this.properties.range[0]),
+        ]
     }
     protected applyStyles() {
         if(this.properties.stroke_color) this.ctx.strokeStyle = this.properties.stroke_color!;
@@ -59,19 +90,6 @@ class VisualElement {
             this.ctx.direction = this.properties.text_direction!;
         }
     }
-    public getCoordinatesOf(x : number, y : number) : [number, number] {
-        const result_matrix = Multiply2By2Matrics(this.properties.transform_matrix, [[x, y], [0, 0]])
-        x = result_matrix[0][0];
-        y = result_matrix[0][1];
-        return [
-            (x - this.properties.domain[0]) * this.properties.width / (this.properties.domain[1] - this.properties.domain[0]),
-            (this.properties.range[1] - y) * this.properties.height / (this.properties.range[1] - this.properties.range[0]),
-        ]
-    }
-    protected initializeEvents(events_objects : Events[]) {
-        for(let events of events_objects)
-            for(let event in events) this[event] = events[event];
-    }
     public static linearChangeEvent(element : VisualElement, start_frame : number, duration : number, properties : Record<string, [any, any, string]>) {
         const ChangeFrames : Record<string, any> = {};
         for(let property in properties) {
@@ -85,6 +103,9 @@ class VisualElement {
             frame = frame.getNextFrame();
         }
     }
+    protected clear() {
+        this.ctx.clearRect(0, 0, this.properties.width, this.properties.height);
+    }
     protected show() {
         this.canvas.style.display = "inline_block";
         this.isVisible = true;
@@ -92,9 +113,6 @@ class VisualElement {
     protected hide() {
         this.canvas.style.display = "none";
         this.isVisible = false;
-    }
-    protected clear() {
-        this.ctx.clearRect(0, 0, this.properties.width, this.properties.height);
     }
 }
 

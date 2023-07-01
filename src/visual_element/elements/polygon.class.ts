@@ -9,7 +9,7 @@ import Lib from "../../lib/lib.js"
 const { pi } = Lib.Constants;
 const { cos, sin } = Lib.Funcs;
 const { getTransformFrames } = Lib.Animation;
-// const { StringToRGBTuple, RGBTupleToString, RGBToHSL, RGBTransfromFrames, HSLToRGB, HSLTransfromFrames, isRGBColor } = Lib.Colors
+const { findIndexOf } = Lib.Arrays;
 
 class Polygon extends VisualElement {
     constructor(properties : IPolygonElement) {
@@ -21,9 +21,22 @@ class Polygon extends VisualElement {
         this.points = this.getPoints()
     }
     private properties! : IPolygonElement;
+    private properties_change_record! : Map<string, number[]>;
+    private properties_values_record! : Map<number, IPolygonElement>;
     private angles! : number[];
     private points! : [number,number][];
 
+    private changeAngles(element : Polygon, frame : number, new_angles : number | number[]) {
+        this.addPropertyChangeToRecords(element, frame, 'angles', new_angles);
+    }
+    private changeRadius(element : VisualElement, frame : number, new_radius : number) {
+        this.addPropertyChangeToRecords(element, frame, 'radius', new_radius);
+    }
+    private linearChangeRadius(element : VisualElement, frame : number, duration : number, new_radius : number) {
+        const initial_radius = this.properties_values_record.get(findIndexOf(frame, this.properties_change_record.get('radius')!))!['radius']!;
+        const radius_transform_frames = getTransformFrames(initial_radius, new_radius, duration);
+        for(let i = 1; i <= duration; i++) Animation.newAt(frame + i).do(element, "changeRadius", radius_transform_frames[i])
+    }
     private getAngles() {
         let angles : number[] = [this.properties.rotation!];
         if(typeof this.properties.angles === 'number') {
@@ -44,6 +57,13 @@ class Polygon extends VisualElement {
             points.push([this.properties.center![0] - this.properties.radius! * cos(angle), this.properties.center![0] + this.properties.radius! * sin(angle)])
         }
         return points;
+    }
+    private update(frame : number) {
+        this.properties = this.getPropertiesAt(frame);
+        this.applyStyles();
+        this.angles = this.getAngles();
+        this.points = this.getPoints();
+        this.draw();
     }
     private draw() {
         this.clear()
@@ -68,31 +88,29 @@ class Polygon extends VisualElement {
         }
         this.ctx.fill()
     }
-    private changeAngles(element : VisualElement, angles : number | number[]) {
-        this.properties.angles = angles;
-        this.angles = this.getAngles();
-        this.points = this.getPoints()
-    }
-    private changeRadius(element : VisualElement, new_radius : number) {
-        this.properties.radius = new_radius;
-        this.points = this.getPoints();
-    }
-    private changeRotationTo(element : VisualElement, new_rotation : number) {
-        this.properties.rotation = new_rotation;
-        this.angles = this.getAngles();
-        this.points = this.getPoints();
-    } 
-    private linearChangeRadius(element : VisualElement, start_frame : number, duration : number, new_radius : number) {
-        VisualElement.linearChangeEvent(element, start_frame, duration, {"radius" : [element.properties, new_radius, "changeRadius"]})
-    }
-    private linearRotationBy(element : VisualElement, start_frame : number, duration : number, rotation : number) {
-        const rotationChangeFrames = getTransformFrames(this.properties.rotation!, this.properties.rotation! + rotation, duration);
-        let frame = Animation.at(start_frame);
-        for(let i = 0; i <= duration; i++) {
-            frame.doAction(this, "changeRotationTo", rotationChangeFrames[i]);
-            frame = frame.getNextFrame();
-        }
-    }
+    // private changeAngles(element : VisualElement, angles : number | number[]) {
+    //     this.properties.angles = angles;
+    //     this.angles = this.getAngles();
+    //     this.points = this.getPoints()
+    // }
+    // private changeRadius(element : VisualElement, new_radius : number) {
+    //     this.properties.radius = new_radius;
+    //     this.points = this.getPoints();
+    // }
+    // private changeRotationTo(element : VisualElement, new_rotation : number) {
+    //     this.properties.rotation = new_rotation;
+    //     this.angles = this.getAngles();
+    //     this.points = this.getPoints();
+    // } 
+
+    // private linearRotationBy(element : VisualElement, start_frame : number, duration : number, rotation : number) {
+    //     const rotationChangeFrames = getTransformFrames(this.properties.rotation!, this.properties.rotation! + rotation, duration);
+    //     let frame = Animation.at(start_frame);
+    //     for(let i = 0; i <= duration; i++) {
+    //         frame.doAction(this, "changeRotationTo", rotationChangeFrames[i]);
+    //         frame = frame.getNextFrame();
+    //     }
+    // }
 }
 
 export default Polygon;

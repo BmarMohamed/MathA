@@ -6,7 +6,6 @@ class Frame {
         this.id = Frame.frame_id++;
         this.actions = [];
     }
-
     private static frame_id : number = 0;
     private id! : number;
     private next! : Frame | null;
@@ -15,7 +14,6 @@ class Frame {
         event : string;
         params : any[];
     }[];
-
     public setNextFrame(frame : Frame){
         return this.next = frame;
     }
@@ -49,7 +47,6 @@ class Frame {
         }
     }
 }
-
 class Animation {
     constructor() {}
 //===============================================================================================
@@ -58,7 +55,6 @@ class Animation {
     private static resolution : [ number, number ] = [ 1280, 720 ];
     private static background : string = "#000000";
     private static parent : HTMLElement = document.body;
-
 //===============================================================================================
     public static getProperties() {
         return {
@@ -127,6 +123,32 @@ class Animation {
             frame.execute();
             if(frame !== frame.getNextFrame()) frame = frame.getNextFrame();
             else clearInterval(interval);
+        }, 1000 / Animation.fps);
+    }
+    public static changesMap : Map<number, Set<VisualElement>> = new Map();
+    public static currentFrame = 0;
+    public static newAt(frame : number) {
+        this.currentFrame = frame
+        return Animation;
+    }
+    public static do(element : VisualElement, action : string, ...params : any[]) {
+        element[action](element, Animation.currentFrame, ...params);
+        Animation.changesMap.has(Animation.currentFrame)?
+        Animation.changesMap.get(Animation.currentFrame)!.add(element) :
+        Animation.changesMap.set(Animation.currentFrame, new Set([element]));
+        return Animation;
+    }
+    public static StartAnimationNewEngine(frame : number = 0, step : number = 1) {
+        let current_frame = frame;
+        let current_step = step;
+        const interval = setInterval(() => {
+            if(this.changesMap.has(current_frame)) {
+                console.log((this.changesMap.get(current_frame)))
+                for(let element of this.changesMap.get(current_frame)!) {
+                    element.update(current_frame)
+                }
+            }
+            current_frame =  Math.floor(current_frame + current_step);
         }, 1000 / Animation.fps);
     }
 //===============================================================================================

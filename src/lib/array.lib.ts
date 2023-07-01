@@ -21,6 +21,13 @@ const Arrays = {
         arr.shift();
         return random_element;
     },
+    findIndexOf(num : number, arr : number[]) {
+        arr = Arrays.bubbleSort(arr).reverse();
+        for(let i = 0; i < arr.length; i++) {
+            if(num >= arr[i]) return arr[i];
+        }
+        return 0;
+    },
     Multiply2By2Matrics(matrix1 : [[number, number], [number, number]], matrix2 : [[number, number], [number, number]]) {
         return [
             [
