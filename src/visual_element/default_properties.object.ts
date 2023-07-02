@@ -20,7 +20,7 @@ export const Render : IRender = {
     domain : [-8 , 8],
     range : [-4.5, 4.5],
     position : [0, 0],
-    transform_matrix : [[1, 0], [0, 1]],
+    matrix : [[1, 0], [0, 1]],
 }
 const GradientColors : IGradientColors = {
     gradient_start_position : [-8, -4.5],

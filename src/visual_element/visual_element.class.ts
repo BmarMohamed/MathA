@@ -58,7 +58,7 @@ class VisualElement {
         return properties;
     }
     public getCoordinatesOf(x : number, y : number) : [number, number] {
-        const result_matrix = Multiply2By2Matrics(this.properties.transform_matrix, [[x, y], [0, 0]])
+        const result_matrix = Multiply2By2Matrics(this.properties.matrix, [[x, y], [0, 0]])
         x = result_matrix[0][0];
         y = result_matrix[0][1];
         return [
@@ -90,21 +90,13 @@ class VisualElement {
             this.ctx.direction = this.properties.text_direction!;
         }
     }
-    public static linearChangeEvent(element : VisualElement, start_frame : number, duration : number, properties : Record<string, [any, any, string]>) {
-        const ChangeFrames : Record<string, any> = {};
-        for(let property in properties) {
-            ChangeFrames[property] = getTransformFrames(properties[property][0][property], properties[property][1], duration);
-        }
-        let frame = Animation.at(start_frame);
-        for(let i = 0; i <= duration; i++) {
-            for(let property in ChangeFrames) {
-                frame.doAction(element, properties[property][2], ChangeFrames[property][i]);
-            }
-            frame = frame.getNextFrame();
-        }
+    public static linearChangeEvent(element : VisualElement, frame : number, duration : number, property : string, new_value : number | number[], change_event : string) {
+        const initial_value = element.properties_values_record.get(findIndexOf(frame, element.properties_change_record.get(property)!))![property]!;
+        const transform_frames = getTransformFrames(initial_value, new_value, duration);
+        for(let i = 1; i <= duration; i++) Animation.at(frame + i).do(element, change_event, transform_frames[i])
     }
     protected clear() {
-        this.ctx.clearRect(0, 0, this.properties.width, this.properties.height);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
     protected show() {
         this.canvas.style.display = "inline_block";

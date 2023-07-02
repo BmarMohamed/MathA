@@ -1,15 +1,12 @@
 import { IPolygonElement } from "../properties.interface.js";
 import { DefaultPolygonProperties } from "../default_properties.object.js";
 import VisualElement from "../visual_element.class.js";
-import Animation from "../../animation.class.js";
-import RenderEvents from "../events/render.event.js";
+import RenderEvents, { RenderEventsList } from "../events/render.event.js";
 import DrawStyleEvents from "../events/draw_style.event.js";
-import Lib from "../../lib/lib.js"
 
+import Lib from "../../lib/lib.js";
 const { pi } = Lib.Constants;
 const { cos, sin } = Lib.Funcs;
-const { getTransformFrames } = Lib.Animation;
-const { findIndexOf } = Lib.Arrays;
 
 class Polygon extends VisualElement {
     constructor(properties : IPolygonElement) {
@@ -25,18 +22,12 @@ class Polygon extends VisualElement {
     private properties_values_record! : Map<number, IPolygonElement>;
     private angles! : number[];
     private points! : [number,number][];
-
-    private changeAngles(element : Polygon, frame : number, new_angles : number | number[]) {
-        this.addPropertyChangeToRecords(element, frame, 'angles', new_angles);
-    }
-    private changeRadius(element : VisualElement, frame : number, new_radius : number) {
-        this.addPropertyChangeToRecords(element, frame, 'radius', new_radius);
-    }
-    private linearChangeRadius(element : VisualElement, frame : number, duration : number, new_radius : number) {
-        const initial_radius = this.properties_values_record.get(findIndexOf(frame, this.properties_change_record.get('radius')!))!['radius']!;
-        const radius_transform_frames = getTransformFrames(initial_radius, new_radius, duration);
-        for(let i = 1; i <= duration; i++) Animation.newAt(frame + i).do(element, "changeRadius", radius_transform_frames[i])
-    }
+    public static readonly events = {
+        ...RenderEventsList,
+        ChangeRadius : "changeRadius",
+        ChangeAngles : "changeAngles",
+        LinearChangeRadius : "linearChangeRadius",
+    };
     private getAngles() {
         let angles : number[] = [this.properties.rotation!];
         if(typeof this.properties.angles === 'number') {
@@ -88,15 +79,15 @@ class Polygon extends VisualElement {
         }
         this.ctx.fill()
     }
-    // private changeAngles(element : VisualElement, angles : number | number[]) {
-    //     this.properties.angles = angles;
-    //     this.angles = this.getAngles();
-    //     this.points = this.getPoints()
-    // }
-    // private changeRadius(element : VisualElement, new_radius : number) {
-    //     this.properties.radius = new_radius;
-    //     this.points = this.getPoints();
-    // }
+    private changeAngles(element : Polygon, frame : number, new_angles : number | number[]) {
+        this.addPropertyChangeToRecords(element, frame, 'angles', new_angles);
+    }
+    private changeRadius(element : VisualElement, frame : number, new_radius : number) {
+        this.addPropertyChangeToRecords(element, frame, 'radius', new_radius);
+    }
+    private linearChangeRadius(element : VisualElement, frame : number, duration : number, new_radius : number) {
+        VisualElement.linearChangeEvent(element, frame, duration, 'radius', new_radius, "changeRadius");
+    }
     // private changeRotationTo(element : VisualElement, new_rotation : number) {
     //     this.properties.rotation = new_rotation;
     //     this.angles = this.getAngles();

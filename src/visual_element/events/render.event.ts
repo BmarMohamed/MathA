@@ -1,72 +1,85 @@
 import VisualElement from "../visual_element.class.js";
 import Events from "./event.js";
-import Lib from "../../lib/lib.js";
-const { getTransformFrames } = Lib.Animation;
-const { Multiply2By2Matrics } = Lib.Arrays;
 import Animation from "../../animation.class.js";
 
+import Lib from "../../lib/lib.js";
+const { getTransformFrames } = Lib.Animation;
+const { Multiply2By2Matrics, findIndexOf } = Lib.Arrays;
+
 const RenderEvents : Events = {
-    changeWidth(element : VisualElement, new_width : number, funcs? : string[], parameters? : any[][]) {
-        element.properties.width = new_width;
-        if(funcs) for(let i = 0; i < funcs!.length; i++) element[funcs![i]](...parameters![i]);
+    changeWidth(element : VisualElement, frame : number, new_width : number) {
+        this.addPropertyChangeToRecords(element, frame, 'width', new_width);
     },
-    changeHeight(element : VisualElement, new_height : number, funcs? : string[], parameters? : any[][]) {
-        element.properties.height = new_height;
-        if(funcs) for(let i = 0; i < funcs!.length; i++) element[funcs![i]](...parameters![i]);
+    changeHeight(element : VisualElement, frame : number, new_height : number) {
+        this.addPropertyChangeToRecords(element, frame, 'height', new_height);
     },
-    changeDomain(element : VisualElement, new_domain : [number, number], funcs? : string[], parameters? : any[][]) {
-        element.properties.domain = new_domain;
-        if(funcs) for(let i = 0; i < funcs!.length; i++) element[funcs![i]](...parameters![i]);
+    changeDomain(element : VisualElement,frame : number,  new_domain : [number, number]) {
+        this.addPropertyChangeToRecords(element, frame, 'domain', new_domain);
     },
-    changeRange(element : VisualElement, new_range : [number, number], funcs? : string[], parameters? : any[][]) {
-        element.properties.range = new_range;
-        if(funcs) for(let i = 0; i < funcs!.length; i++) element[funcs![i]](...parameters![i]);
+    changeRange(element : VisualElement, frame : number, new_range : [number, number]) {
+        this.addPropertyChangeToRecords(element, frame, 'range', new_range);
     },
-    changePosition(element : VisualElement, new_position : [number, number], funcs? : string[], parameters? : any[][]) {
-        element.properties.range = new_position;
-        if(funcs) for(let i = 0; i < funcs!.length; i++) element[funcs![i]](...parameters![i]);
+    changePosition(element : VisualElement, frame : number, new_position : [number, number]) {
+        this.addPropertyChangeToRecords(element, frame, 'position', new_position);
     },
-    changeTransformMatrix(element : VisualElement, matrix : [[number, number], [number, number]]) {
-        element.properties.transform_matrix = matrix;
+    changeMatrix(element : VisualElement, frame : number, new_matrix : [[number, number], [number, number]]) {
+        this.addPropertyChangeToRecords(element, frame, 'matrix', new_matrix);
     },
-    addTransformMatrix(element : VisualElement, matrix : [[number, number], [number, number]]) {
-        element.properties.transform_matrix = Multiply2By2Matrics(matrix, element.properties.transform_matrix) as [[number, number], [number, number]];
+    addMatrix(element : VisualElement, frame : number, matrix : [[number, number], [number, number]]) {
+        this.addPropertyChangeToRecords(element, frame, 'matrix', 
+            Multiply2By2Matrics(matrix, element.properties.matrix
+        ) as [[number, number], [number, number]]);
     },
     linearChangeWidth(element : VisualElement, start_frame : number, duration : number, new_width : number) {
-        VisualElement.linearChangeEvent(element, start_frame, duration, {"width" : [element.properties, new_width, "changeWidth"]})
+        VisualElement.linearChangeEvent(element, start_frame, duration, "width" , new_width, "changeWidth")
     },
     linearChangeHeight(element : VisualElement, start_frame : number, duration : number, new_height : number) {
-        VisualElement.linearChangeEvent(element, start_frame, duration, {"height" : [element.properties, new_height, "changeHeight"]})
+        VisualElement.linearChangeEvent(element, start_frame, duration, "height", new_height, "changeHeight")
     },
     linearChangeDomain(element : VisualElement, start_frame : number, duration : number, new_domain : [number, number]) {
-        VisualElement.linearChangeEvent(element, start_frame, duration, {"domain" : [element.properties, new_domain, "changeDomain"]})
+        VisualElement.linearChangeEvent(element, start_frame, duration, "domain", new_domain, "changeDomain")
     },
     linearChangeRange(element : VisualElement, start_frame : number, duration : number, new_range : [number, number]) {
-        VisualElement.linearChangeEvent(element, start_frame, duration, {"range" : [element.properties, new_range, "changeRange"]})
+        VisualElement.linearChangeEvent(element, start_frame, duration, "range", new_range, "changeRange")
     },
     linearChangePosition(element : VisualElement, start_frame : number, duration : number, new_position : [number, number]) {
-        VisualElement.linearChangeEvent(element, start_frame, duration, {"position" : [element.properties, new_position, "changePosition"]})
+        VisualElement.linearChangeEvent(element, start_frame, duration, "position", new_position, "changePosition")
     },
-    linearChangeTransformMatrix(element : VisualElement, start_frame : number, duration : number, new_transform_matrix : [[number, number], [number, number]]) {
-        const transform_matrix_i_transform_frames = getTransformFrames(element.properties.transform_matrix[0], new_transform_matrix[0], duration);
-        const transform_matrix_j_transform_frames = getTransformFrames(element.properties.transform_matrix[1], new_transform_matrix[1], duration);
-        let frame = Animation.at(start_frame);
-        for(let i = 0; i <= duration; i++) {
-            frame.doAction(element, "changeTransformMatrix", [transform_matrix_i_transform_frames[i], transform_matrix_j_transform_frames[i]], duration);
-            frame = frame.getNextFrame();
+    linearChangeMatrix(element : VisualElement, frame : number, duration : number, new_matrix : [[number, number], [number, number]]) {
+        const change_frame = findIndexOf(frame, element. properties_change_record.get('matrix'))
+        const matrix_i_transform_frames = getTransformFrames(element.properties_values_record.get(change_frame).matrix[0], new_matrix[0], duration);
+        const matrix_j_transform_frames = getTransformFrames(element.properties_values_record.get(change_frame).matrix[1], new_matrix[1], duration);
+        for(let i = 1; i <= duration; i++){
+            Animation.at(frame + i);
+            Animation.do(element, "changeMatrix", [matrix_i_transform_frames[i], matrix_j_transform_frames[i]]);
+        } 
+    },
+    linearAddMatrix(element : VisualElement, frame : number, duration : number, new_matrix : [[number, number], [number, number]]) {
+        const change_frame = findIndexOf(frame, element. properties_change_record.get('matrix'))
+        const matrix = Multiply2By2Matrics(new_matrix, element.properties.matrix) as [[number, number], [number, number]];
+        const transform_matrix_i_transform_frames = getTransformFrames(element.properties_values_record.get(change_frame).matrix[0], matrix[0], duration);
+        const transform_matrix_j_transform_frames = getTransformFrames(element.properties_values_record.get(change_frame).matrix[1], matrix[1], duration); 
+        for(let i = 1; i <= duration; i++) {
+            Animation.at(frame + i);
+            Animation.do(element, "changeMatrix", [transform_matrix_i_transform_frames[i], transform_matrix_j_transform_frames[i]]);
         }
     },
-    linearAddTransformMatrix(element : VisualElement, start_frame : number, duration : number, new_transform_matrix : [[number, number], [number, number]]) {
-        const old_matrix = element.properties.transform_matrix;
-        const new_matrix = Multiply2By2Matrics(new_transform_matrix, element.properties.transform_matrix) as [[number, number], [number, number]];
-        const transform_matrix_i_transform_frames = getTransformFrames(old_matrix[0], new_matrix[0], duration);
-        const transform_matrix_j_transform_frames = getTransformFrames(old_matrix[1], new_matrix[1], duration);
-        let frame = Animation.at(start_frame);
-        for(let i = 0; i <= duration; i++) {
-            frame.doAction(element, "changeTransformMatrix", [transform_matrix_i_transform_frames[i], transform_matrix_j_transform_frames[i]], duration);
-            frame = frame.getNextFrame();
-        }
-    },
+}
+export const RenderEventsList =  {
+    ChangeWidth : "changeWidth",
+    ChangeHeight : "changeHeight",
+    ChangeDomain : "changeDomain",
+    ChangeRange : "changeRange",
+    ChangePosition : "changePosition",
+    ChangeMatrix : "changeMatrix",
+    AddMatrix : "addMatrix",
+    LinearChangeWidth : "linearChangeWidth",
+    LinearChangeHeight : "linearChangeHeight",
+    LinearChangeDomain : "linearChangeDomain",
+    LinearChangeRange : "linearChangeRange",
+    LinearChangePosition : "linearChangePosition",
+    LinearChangeMatrix : "linearChangeMatrix",
+    LinearAddMatrix : "linearAddMatrix",
 }
 
 export default RenderEvents;

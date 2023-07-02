@@ -1,52 +1,6 @@
 import VisualElement from "./visual_element/visual_element.class.js";
 import { Render } from "./visual_element/default_properties.object.js";
 
-class Frame {
-    constructor() {
-        this.id = Frame.frame_id++;
-        this.actions = [];
-    }
-    private static frame_id : number = 0;
-    private id! : number;
-    private next! : Frame | null;
-    private actions! : {
-        element : VisualElement;
-        event : string;
-        params : any[];
-    }[];
-    public setNextFrame(frame : Frame){
-        return this.next = frame;
-    }
-    public getNextFrame() {
-        return this.next || this;
-    }
-    public do(element : VisualElement, event : string, ...params : any) {
-        this.actions.push({
-            element, 
-            event, 
-            params : [element, this.id, ...params]
-        })
-        return this;
-    }
-    public doAction(element : VisualElement, event : string, ...params : any) {
-        this.actions.push({
-            element, 
-            event, 
-            params : [element, ...params]
-        })
-        return this;
-    }
-    public prepare() {
-        let elements : Set<VisualElement> = new Set();
-        for(let action of this.actions) elements.add(action.element);
-        for(let element of elements) this.doAction(element, "draw");
-    }
-    public execute() {
-        for(const action of this.actions) {
-            action.element[action.event](...action.params);
-        }
-    }
-}
 class Animation {
     constructor() {}
 //===============================================================================================
@@ -85,7 +39,6 @@ class Animation {
     public static initialize() {
         this.initialized = true;
         this.initializeHtml();
-        this.initializeFrames();
         Render.width = this.getProperties().resolution[0];
         Render.height = this.getProperties().resolution[1];
     }
@@ -104,30 +57,9 @@ class Animation {
         this.parent.appendChild(this.html);
     }
 //===============================================================================================   
-    public static frames : Frame[] = [new Frame()];
-    public static at(index : number) {
-        return this.frames[index] || this.frames[0]!;
-    }
-    private static initializeFrames() {
-        for(let i = 0 ; i < this.fps * this.duration; i++) this.frames.push(new Frame());
-        for(let i = 0 ; i < this.fps * this.duration; i++) 
-            this.at(i).setNextFrame(
-                this.at(i + 1)
-            );
-    }
-//===============================================================================================
-    public static start() {
-        let frame = this.at(0)
-        const interval = setInterval(() => {
-            frame.prepare();
-            frame.execute();
-            if(frame !== frame.getNextFrame()) frame = frame.getNextFrame();
-            else clearInterval(interval);
-        }, 1000 / Animation.fps);
-    }
     public static changesMap : Map<number, Set<VisualElement>> = new Map();
     public static currentFrame = 0;
-    public static newAt(frame : number) {
+    public static at(frame : number) {
         this.currentFrame = frame
         return Animation;
     }
@@ -138,17 +70,16 @@ class Animation {
         Animation.changesMap.set(Animation.currentFrame, new Set([element]));
         return Animation;
     }
-    public static StartAnimationNewEngine(frame : number = 0, step : number = 1) {
+    public static start(frame : number = 0, step : number = 1) {
         let current_frame = frame;
         let current_step = step;
         const interval = setInterval(() => {
-            if(this.changesMap.has(current_frame)) {
-                console.log((this.changesMap.get(current_frame)))
-                for(let element of this.changesMap.get(current_frame)!) {
-                    element.update(current_frame)
+            if(this.changesMap.has(Math.floor(current_frame))) {
+                for(let element of this.changesMap.get(Math.floor(current_frame))!) {
+                    element.update(Math.floor(current_frame))
                 }
             }
-            current_frame =  Math.floor(current_frame + current_step);
+            current_frame =  current_frame + current_step;
         }, 1000 / Animation.fps);
     }
 //===============================================================================================

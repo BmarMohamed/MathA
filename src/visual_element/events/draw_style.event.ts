@@ -5,10 +5,10 @@ import Events from "./event.js";
 import { AddEvents } from "./event.js";
 
 const DrawStyleEvents : Events = {
-    changeDrawStyle(element : VisualElement, draw_style : "stroke" | "fill" | "both") {
-        if(element.properties.draw_style == draw_style) return;
-        element.properties.draw_style = draw_style;
-    }
+    // changeDrawStyle(element : VisualElement, draw_style : "stroke" | "fill" | "both") {
+    //     if(element.properties.draw_style == draw_style) return;
+    //     element.properties.draw_style = draw_style;
+    // }
 }
 
 AddEvents(DrawStyleEvents, StrokeEvents);
