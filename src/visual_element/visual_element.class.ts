@@ -93,7 +93,7 @@ class VisualElement {
     public static linearChangeEvent(element : VisualElement, frame : number, duration : number, property : string, new_value : number | number[], change_event : string) {
         const initial_value = element.properties_values_record.get(findIndexOf(frame, element.properties_change_record.get(property)!))![property]!;
         const transform_frames = getTransformFrames(initial_value, new_value, duration);
-        for(let i = 1; i <= duration; i++) Animation.at(frame + i).do(element, change_event, transform_frames[i])
+        for(let i = 1; i <= duration; i++) Animation.at(frame + i).do(element, change_event, transform_frames[i]);
     }
     protected clear() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);

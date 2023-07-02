@@ -8,25 +8,25 @@ const { Multiply2By2Matrics, findIndexOf } = Lib.Arrays;
 
 const RenderEvents : Events = {
     changeWidth(element : VisualElement, frame : number, new_width : number) {
-        this.addPropertyChangeToRecords(element, frame, 'width', new_width);
+        element.addPropertyChangeToRecords(element, frame, 'width', new_width);
     },
     changeHeight(element : VisualElement, frame : number, new_height : number) {
-        this.addPropertyChangeToRecords(element, frame, 'height', new_height);
+        element.addPropertyChangeToRecords(element, frame, 'height', new_height);
     },
     changeDomain(element : VisualElement,frame : number,  new_domain : [number, number]) {
-        this.addPropertyChangeToRecords(element, frame, 'domain', new_domain);
+        element.addPropertyChangeToRecords(element, frame, 'domain', new_domain);
     },
     changeRange(element : VisualElement, frame : number, new_range : [number, number]) {
-        this.addPropertyChangeToRecords(element, frame, 'range', new_range);
+        element.addPropertyChangeToRecords(element, frame, 'range', new_range);
     },
     changePosition(element : VisualElement, frame : number, new_position : [number, number]) {
-        this.addPropertyChangeToRecords(element, frame, 'position', new_position);
+        element.addPropertyChangeToRecords(element, frame, 'position', new_position);
     },
     changeMatrix(element : VisualElement, frame : number, new_matrix : [[number, number], [number, number]]) {
-        this.addPropertyChangeToRecords(element, frame, 'matrix', new_matrix);
+        element.addPropertyChangeToRecords(element, frame, 'matrix', new_matrix);
     },
     addMatrix(element : VisualElement, frame : number, matrix : [[number, number], [number, number]]) {
-        this.addPropertyChangeToRecords(element, frame, 'matrix', 
+        element.addPropertyChangeToRecords(element, frame, 'matrix', 
             Multiply2By2Matrics(matrix, element.properties.matrix
         ) as [[number, number], [number, number]]);
     },

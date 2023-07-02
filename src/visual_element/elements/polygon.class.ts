@@ -2,7 +2,7 @@ import { IPolygonElement } from "../properties.interface.js";
 import { DefaultPolygonProperties } from "../default_properties.object.js";
 import VisualElement from "../visual_element.class.js";
 import RenderEvents, { RenderEventsList } from "../events/render.event.js";
-import DrawStyleEvents from "../events/draw_style.event.js";
+import DrawStyleEvents, { DrawStyleEventsList } from "../events/draw_style.event.js";
 
 import Lib from "../../lib/lib.js";
 const { pi } = Lib.Constants;
@@ -24,6 +24,7 @@ class Polygon extends VisualElement {
     private points! : [number,number][];
     public static readonly events = {
         ...RenderEventsList,
+        ...DrawStyleEventsList,
         ChangeRadius : "changeRadius",
         ChangeAngles : "changeAngles",
         LinearChangeRadius : "linearChangeRadius",
