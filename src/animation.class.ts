@@ -1,7 +1,9 @@
 import VisualElement from "./visual_element/visual_element.class.js";
 import { Render } from "./visual_element/default_properties.object.js";
+import Queue from "./lib/classes/data_structures/queue.class.js";
 
 class Animation {
+    static [key : string] : any;
     constructor() {}
 //===============================================================================================
     private static fps : number = 60;
@@ -58,6 +60,7 @@ class Animation {
     }
 //===============================================================================================   
     public static changesMap : Map<number, Set<VisualElement>> = new Map();
+    public static actions_queue : Queue<[number, string, number]> = new Queue();
     public static currentFrame = 0;
     public static at(frame : number) {
         this.currentFrame = frame
@@ -70,20 +73,64 @@ class Animation {
         Animation.changesMap.set(Animation.currentFrame, new Set([element]));
         return Animation;
     }
-    public static start(frame : number = 0, step : number = 1) {
-        let current_frame = frame;
-        let current_step = step;
+    public static doAction(frame : number, action : string, param : number = 0) {
+        this.actions_queue.queue([frame, action, param])
+        return this;
+    }
+    public static is_animation_running : boolean = false;
+    public static running_frame : number = 0;
+    public static running_speed : number = 1;
+    // public static last_frame_before_stop : number = 0;
+    // public static animation_actions_frame : number = 0;
+    // public static readonly actions = {
+    //     goto : 'goto',
+    //     speed : 'speed',
+    //     stop : 'stop',
+    //     continue : 'continue',
+    //     pause : 'pause',
+    //     reverse : 'reverse',
+    // }
+
+
+    public static start() {
+        this.is_animation_running = true;
         const interval = setInterval(() => {
-            if(this.changesMap.has(Math.floor(current_frame))) {
-                for(let element of this.changesMap.get(Math.floor(current_frame))!) {
-                    element.update(Math.floor(current_frame))
+            if(this.changesMap.has(Math.floor(this.running_frame)) && this.is_animation_running) {
+                for(let element of this.changesMap.get(Math.floor(this.running_frame))!) {
+                    element.update(Math.floor(this.running_frame))
                 }
             }
-            current_frame =  current_frame + current_step;
+            // while(this.actions_queue.getLength() > 0 && this.actions_queue.currentElement()[0] === this.animation_actions_frame) {
+            //     const element = this.actions_queue.dequeue()!;
+            //     this[element[1]](element[2]);
+            // }
+            // this.animation_actions_frame++;
+            this.running_frame =  this.running_frame + this.running_speed;
+            
         }, 1000 / Animation.fps);
     }
+    // public static goto(frame : number) {
+    //     this.running_frame = frame;
+    // }
+    // public static speed(speed : number) {
+    //     this.running_speed = speed;
+    // }
+    // public static stop() {
+    //     this.last_frame_before_stop = this.running_frame;
+    //     this.is_animation_running = false;
+    // }
+    // public static continue() {
+    //     this.running_frame = this.last_frame_before_stop;
+    //     this.is_animation_running = true;
+    // }
+    // public static pause(duration : number) {
+    //     this.stop();
+    //     setTimeout(() => this.continue(), duration * 1000)
+    // }
+    // public static reverse() {
+    //     this.running_speed *= -1;
+    // }
 //===============================================================================================
-
 }
 
 export default Animation;
