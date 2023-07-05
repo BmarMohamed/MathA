@@ -3,13 +3,13 @@ import { Render } from "./default_properties.object.js";
 import Lib from "../lib/lib.js";
 import Events from "./events/event.js";
 const { getTransformFrames } = Lib.Animation;
-const { Multiply2By2Matrics, findIndexOf } = Lib.Arrays;
+const { Multiply2By2Matrics, getFloorNumber } = Lib.Arrays;
 
 class VisualElement {
     [key : string] : any;
-    constructor() {
+    constructor(initialize : boolean = true) {
         this.id = VisualElement.visual_element_id++;
-        this.initialize();
+        if(initialize) this.initialize();
     }
     private static visual_element_id = 0;
     protected id! : number; 
@@ -52,7 +52,7 @@ class VisualElement {
         const properties : {[key : string] : any} = {};
         for(let property in this.properties) {
             const property_change_array = this.properties_change_record.get(property)! as number[];
-            let current_frame = findIndexOf(frame, property_change_array);
+            let current_frame = getFloorNumber(frame, property_change_array);
             properties[property] = this.properties_values_record.get(current_frame)[property];
         }
         return properties;
@@ -70,7 +70,6 @@ class VisualElement {
         if(this.properties.stroke_color) this.ctx.strokeStyle = this.properties.stroke_color!;
         if(this.properties.fill_color) this.ctx.fillStyle = this.properties.fill_color!;
         if(this.properties.line_width) this.ctx.lineWidth = this.properties.line_width!;
-        if(this.properties.position) this.ctx.translate(this.properties.position![0], this.properties.position![1]);
         if(this.properties.gradient_colors) {
             const gradient = this.ctx.createLinearGradient(
                 ...this.getCoordinatesOf(...this.properties.gradient_start_position! as [number, number]),
@@ -91,7 +90,7 @@ class VisualElement {
         }
     }
     public static linearChangeEvent(element : VisualElement, frame : number, duration : number, property : string, new_value : number | number[], change_event : string) {
-        const initial_value = element.properties_values_record.get(findIndexOf(frame, element.properties_change_record.get(property)!))![property]!;
+        const initial_value = element.properties_values_record.get(getFloorNumber(frame, element.properties_change_record.get(property)!))![property]!;
         const transform_frames = getTransformFrames(initial_value, new_value, duration);
         for(let i = 1; i <= duration; i++) Animation.at(frame + i).do(element, change_event, transform_frames[i]);
     }

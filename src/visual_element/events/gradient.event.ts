@@ -1,14 +1,14 @@
 import VisualElement from "../visual_element.class";
 import Events from "./event.js";
 import Lib from "../../lib/lib.js";
-const { findIndexOf } = Lib.Arrays;
+const { getFloorNumber } = Lib.Arrays;
 
 const GradientEvents : Events = {
     setGradient(element : VisualElement, frame : number) {
-        const gradient_start_position_change_frame = findIndexOf(frame, element. properties_change_record.get('gradient_start_position'));
-        const gradient_end_position_change_frame = findIndexOf(frame, element. properties_change_record.get('gradient_start_position'));
-        const gradient_colors_change_frame = findIndexOf(frame, element. properties_change_record.get('gradient_colors'));
-        const apply_gradient_on_change_frame = findIndexOf(frame, element. properties_change_record.get('apply_gradient_on'));
+        const gradient_start_position_change_frame = getFloorNumber(frame, element. properties_change_record.get('gradient_start_position'));
+        const gradient_end_position_change_frame = getFloorNumber(frame, element. properties_change_record.get('gradient_start_position'));
+        const gradient_colors_change_frame = getFloorNumber(frame, element. properties_change_record.get('gradient_colors'));
+        const apply_gradient_on_change_frame = getFloorNumber(frame, element. properties_change_record.get('apply_gradient_on'));
     
         const gradient = element.ctx.createLinearGradient(
             ...element.getCoordinatesOf(...element.properties_values_record.get(gradient_start_position_change_frame).gradient_start_position! as [number, number]),

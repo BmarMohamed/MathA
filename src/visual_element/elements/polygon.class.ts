@@ -25,6 +25,7 @@ class Polygon extends VisualElement {
     public static readonly events = {
         ...RenderEventsList,
         ...DrawStyleEventsList,
+        Draw : 'draw',
         ChangeRadius : "changeRadius",
         ChangeAngles : "changeAngles",
         LinearChangeRadius : "linearChangeRadius",

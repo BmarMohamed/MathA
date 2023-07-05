@@ -4,7 +4,7 @@ import Animation from "../../animation.class.js";
 
 import Lib from "../../lib/lib.js";
 const { getTransformFrames } = Lib.Animation;
-const { Multiply2By2Matrics, findIndexOf } = Lib.Arrays;
+const { Multiply2By2Matrics, getFloorNumber } = Lib.Arrays;
 
 const RenderEvents : Events = {
     changeWidth(element : VisualElement, frame : number, new_width : number) {
@@ -18,9 +18,6 @@ const RenderEvents : Events = {
     },
     changeRange(element : VisualElement, frame : number, new_range : [number, number]) {
         element.addPropertyChangeToRecords(element, frame, 'range', new_range);
-    },
-    changePosition(element : VisualElement, frame : number, new_position : [number, number]) {
-        element.addPropertyChangeToRecords(element, frame, 'position', new_position);
     },
     changeMatrix(element : VisualElement, frame : number, new_matrix : [[number, number], [number, number]]) {
         element.addPropertyChangeToRecords(element, frame, 'matrix', new_matrix);
@@ -42,11 +39,8 @@ const RenderEvents : Events = {
     linearChangeRange(element : VisualElement, start_frame : number, duration : number, new_range : [number, number]) {
         VisualElement.linearChangeEvent(element, start_frame, duration, "range", new_range, "changeRange")
     },
-    linearChangePosition(element : VisualElement, start_frame : number, duration : number, new_position : [number, number]) {
-        VisualElement.linearChangeEvent(element, start_frame, duration, "position", new_position, "changePosition")
-    },
     linearChangeMatrix(element : VisualElement, frame : number, duration : number, new_matrix : [[number, number], [number, number]]) {
-        const change_frame = findIndexOf(frame, element. properties_change_record.get('matrix'))
+        const change_frame = getFloorNumber(frame, element.properties_change_record.get('matrix'))
         const matrix_i_transform_frames = getTransformFrames(element.properties_values_record.get(change_frame).matrix[0], new_matrix[0], duration);
         const matrix_j_transform_frames = getTransformFrames(element.properties_values_record.get(change_frame).matrix[1], new_matrix[1], duration);
         for(let i = 1; i <= duration; i++){
@@ -55,7 +49,7 @@ const RenderEvents : Events = {
         } 
     },
     linearAddMatrix(element : VisualElement, frame : number, duration : number, new_matrix : [[number, number], [number, number]]) {
-        const change_frame = findIndexOf(frame, element. properties_change_record.get('matrix'))
+        const change_frame = getFloorNumber(frame, element.properties_change_record.get('matrix'))
         const matrix = Multiply2By2Matrics(new_matrix, element.properties.matrix) as [[number, number], [number, number]];
         const transform_matrix_i_transform_frames = getTransformFrames(element.properties_values_record.get(change_frame).matrix[0], matrix[0], duration);
         const transform_matrix_j_transform_frames = getTransformFrames(element.properties_values_record.get(change_frame).matrix[1], matrix[1], duration); 
@@ -70,14 +64,12 @@ export const RenderEventsList =  {
     ChangeHeight : "changeHeight",
     ChangeDomain : "changeDomain",
     ChangeRange : "changeRange",
-    ChangePosition : "changePosition",
     ChangeMatrix : "changeMatrix",
     AddMatrix : "addMatrix",
     LinearChangeWidth : "linearChangeWidth",
     LinearChangeHeight : "linearChangeHeight",
     LinearChangeDomain : "linearChangeDomain",
     LinearChangeRange : "linearChangeRange",
-    LinearChangePosition : "linearChangePosition",
     LinearChangeMatrix : "linearChangeMatrix",
     LinearAddMatrix : "linearAddMatrix",
 }

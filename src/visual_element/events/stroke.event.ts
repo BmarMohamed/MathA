@@ -12,7 +12,7 @@ import GradientEvents, { GradientEventsList } from "./gradient.event.js";
 import { AddEvents } from "./event.js";
 const { HexToColor} = Lib.Colors;
 const { getTransformFrames } = Lib.Animation;
-const { findIndexOf } = Lib.Arrays;
+const { getFloorNumber } = Lib.Arrays;
 
 const StrokeEvents : Events = {
     changeStrokeColor(element : VisualElement, frame : number, new_color : string) {
@@ -26,7 +26,7 @@ const StrokeEvents : Events = {
         StrokeEvents.changeStrokeColor(element, frame, color.color)
     },
     linearChangeStrokeColor(element : VisualElement, frame : number, duration : number, new_stroke_color : string, color_model : "RGB" | "HSB" | "HSL" = "RGB") {
-        const change_frame = findIndexOf(frame, element. properties_change_record.get('stroke_color'))
+        const change_frame = getFloorNumber(frame, element. properties_change_record.get('stroke_color'))
         const transform_frames = getTransformFrames(
             HexToColor(element.properties_values_record.get(change_frame).stroke_color, color_model).getColorArray(),
             HexToColor(new_stroke_color, color_model).getColorArray(), duration

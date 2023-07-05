@@ -4,7 +4,6 @@ interface IRender {
     height? : number,
     domain? : [number, number],
     range? : [number, number],
-    position? : [number, number],
     matrix? : [[number, number], [number, number]],
 }
 interface IGradientColors {
@@ -61,5 +60,6 @@ export interface IPathElement extends IRender, IDrawStyle {
     points? : [number, number][];
 }
 export interface ITextElement extends IRender, IFont {
-    text? : string,
+    text? : string
+    position? : [number, number],
 }

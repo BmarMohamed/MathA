@@ -1,83 +1,75 @@
-// import { ILineElement } from "../properties.interface.js";
-// import { DefaultLineProperties } from "../default_properties.object.js";
-// import VisualElement from "../visual_element.class.js";
-// import Animation from "../../animation.class.js";
+import { ILineElement } from "../properties.interface.js";
+import { DefaultLineProperties } from "../default_properties.object.js";
+import RenderEvents, { RenderEventsList } from "../events/render.event.js";
+import StrokeEvents, { StrokeEventsList } from "../events/stroke.event.js";
+import VisualElement from "../visual_element.class.js";
+import Animation from "../../animation.class.js";
 
-// import Lib from "../../lib/lib.js";
-// const {getTransformFrames} = Lib.Animation;
-// const {isRGBColor, StringToRGBTuple, RGBToHSL, HSLTransfromFrames, RGBTupleToString, HSLToRGB, RGBTransfromFrames} = Lib.Colors;
+import Lib from "../../lib/lib.js";
+const {getTransformFrames} = Lib.Animation;
+const { getFloorNumber: findIndexOf } = Lib.Arrays;
 
-// class Line extends VisualElement {
-//     constructor(properties : ILineElement) {
-//         super();
-//         this.initializeProperties<ILineElement>(properties, DefaultLineProperties);
-//         this.applyStyles();
-//         this.points = this.getPoints()
-        
-//     }
+class Line extends VisualElement {
+    constructor(properties : ILineElement) {
+        super();
+        this.initializeProperties<ILineElement>(properties, DefaultLineProperties);
+        this.initializeEvents([RenderEvents, StrokeEvents]);
+        this.applyStyles();
+        this.points = this.getPoints();
+    }
+    private properties! : ILineElement;
+    private properties_change_record! : Map<string, number[]>;
+    private properties_values_record! : Map<number, ILineElement>;
+    private points! : [[number, number], [number, number]];
+    public static readonly events = {
+        ...RenderEventsList,
+        ...StrokeEventsList,
+        Draw : 'draw',
+        ChangeCoordinates : "ChangeCoordinates",
+        ChangeFrom : 'changeFrom',
+        ChangeTo : 'changeTo',
+        LinearChangeCoordinates : "linearChangeCoordinates"
+    };
+    private getPoints() : [[number, number], [number, number]] {
+        return [
+            this.getCoordinatesOf(...this.properties.from!) as [number, number],
+            this.getCoordinatesOf(...this.properties.to!) as [number, number]
+        ]
+    }
+    private update(frame : number) {
+        this.properties = this.getPropertiesAt(frame);
+        this.applyStyles();
+        this.points = this.getPoints();
+        this.draw();
+    }
+    private draw() {
+        this.clear()
+            this.ctx.beginPath();
+            this.ctx.moveTo(...this.points[0]);
+            this.ctx.lineTo(...this.points[1]);
+            this.ctx.stroke();
+    }
+    private changeCoordinates(element : VisualElement, frame : number, from : [number, number], to : [number, number]) {
+        this.changeFrom(element, frame, from);
+        this.changeTo(element, frame, to);
+    }
+    private changeFrom(element : VisualElement, frame : number, from : [number, number]) {
+        this.addPropertyChangeToRecords(element, frame, 'from', from);
+    }
+    private changeTo(element : VisualElement, frame : number, to : [number, number]) {
+        this.addPropertyChangeToRecords(element, frame, 'to', to);
+    }
+    private linearChangeCoordinates(element : VisualElement, frame : number, duration : number, new_from : [number, number], new_to : [number, number]) {
+        const from_change_frame = findIndexOf(frame, element.properties_change_record.get('from'));
+        const to_change_frame = findIndexOf(frame, element.properties_change_record.get('to'));
+        const FromChangeFrames = getTransformFrames(this.properties_values_record.get(from_change_frame)!.from!, new_from, duration);
+        const ToChangeFrames = getTransformFrames(this.properties_values_record.get(to_change_frame)!.to!, new_to, duration);
+        for(let i = 1; i <= duration; i++) {
+            Animation.at(frame + i);
+            Animation.do(element, "changeFrom", FromChangeFrames[i]);
+            Animation.do(element, "changeTo", ToChangeFrames[i]);
+        }
+    }
+}
 
-//     private properties! : ILineElement;
-//     private points! : [[number, number], [number, number]];
-
-//     private getPoints() : [[number, number], [number, number]] {
-//         return [
-//             this.getCoordinatesOf(...this.properties.from!) as [number, number],
-//             this.getCoordinatesOf(...this.properties.to!) as [number, number]
-//         ]
-//     }
-//     private draw() {
-//         this.clear()
-//             this.ctx.beginPath();
-//             this.ctx.moveTo(...this.points[0]);
-//             this.ctx.lineTo(...this.points[1]);
-//             this.ctx.stroke();
-//     }
-//     private changeCoordinates(from : [number, number], to : [number, number]) {
-//         this.properties.from = from;
-//         this.properties.to = to;
-//         this.points = this.getPoints();
-//         this.draw();
-//     }
-//     private changeColor(color : string) {
-//         if(isRGBColor(color)) {
-//             this.properties.color = color;
-//             this.ctx.strokeStyle = color;
-//             this.clear();
-//             this.draw();
-//         }
-//     }
-//     private linearChangeCoordinates(start_frame : number, duration : number, new_from : [number, number], new_to : [number, number]) {
-//         const xFromChangeFrames = getTransformFrames(this.properties.from![0], new_from[0], duration);
-//         const yFromChangeFrames = getTransformFrames(this.properties.from![1], new_from[1], duration);
-//         const xToChangeFrames = getTransformFrames(this.properties.to![0], new_to[0], duration);
-//         const yToChangeFrames = getTransformFrames(this.properties.to![1], new_to[1], duration);
-//         let frame = Animation.at(start_frame);
-//         for(let i = 0; i <= duration; i++) {
-//             frame.doAction(this, "changeCoordinates", [xFromChangeFrames[i], yFromChangeFrames[i]], [xToChangeFrames[i], yToChangeFrames[i]]);
-//             frame.doAction(this, "draw");
-//             frame = frame.getNextFrame();
-//         }
-//     }
-//     private linearChangeColorTo(start_frame : number,  duration : number, new_color : string, type : string = "RGB") {
-//         if(this.properties.gradient_enabled) return;
-//         let current_frame = Animation.at(start_frame).getNextFrame();
-//         let color_frames : [number, number, number][] = [];
-//         if(type == "RGB") {
-//             let start_color = StringToRGBTuple(this.properties.stroke_color!);
-//             let end_color = StringToRGBTuple(new_color);
-//             color_frames = RGBTransfromFrames(start_color, end_color, duration);
-//         }
-//         else if(type == "HSL") {
-//             let start_color = RGBToHSL(this.properties.stroke_color!);
-//             let end_color = RGBToHSL(new_color);
-//             color_frames = HSLTransfromFrames(start_color, end_color, duration);
-//             color_frames = color_frames.map(color_frame => HSLToRGB(...color_frame));
-//         }
-//         for(let color_frame of color_frames) {
-//             current_frame.doAction(this, 'changeColor', RGBTupleToString(color_frame));
-//             current_frame = current_frame.getNextFrame();
-//         }
-//     }
-// }
-
-// export default Line;
+export default Line;

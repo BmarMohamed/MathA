@@ -67,16 +67,16 @@ class Animation {
         return Animation;
     }
     public static do(element : VisualElement, action : string, ...params : any[]) {
-        element[action](element, Animation.currentFrame, ...params);
+        if(action !== 'draw') element[action](element, Animation.currentFrame, ...params);
         Animation.changesMap.has(Animation.currentFrame)?
         Animation.changesMap.get(Animation.currentFrame)!.add(element) :
         Animation.changesMap.set(Animation.currentFrame, new Set([element]));
         return Animation;
     }
-    public static doAction(frame : number, action : string, param : number = 0) {
-        this.actions_queue.queue([frame, action, param])
-        return this;
-    }
+    // public static doAction(frame : number, action : string, param : number = 0) {
+    //     this.actions_queue.queue([frame, action, param])
+    //     return this;
+    // }
     public static is_animation_running : boolean = false;
     public static running_frame : number = 0;
     public static running_speed : number = 1;

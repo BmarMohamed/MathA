@@ -11,7 +11,7 @@ import { AddEvents } from "./event.js";
 import GradientEvents, { GradientEventsList } from "./gradient.event.js";
 const { HexToColor} = Lib.Colors;
 const { getTransformFrames } = Lib.Animation;
-const { findIndexOf } = Lib.Arrays;
+const { getFloorNumber } = Lib.Arrays;
 
 const FillEvents : Events = {
     changeFillColor(element : VisualElement, frame : number, new_color : string) {
@@ -25,7 +25,7 @@ const FillEvents : Events = {
         FillEvents.changeFillColor(element, frame, color.color)
     },
     linearChangeFillColor(element : VisualElement, frame : number, duration : number, new_fill_color : string, color_model : "RGB" | "HSB" | "HSL") {
-        const change_frame = findIndexOf(frame, element. properties_change_record.get('stroke_color'))
+        const change_frame = getFloorNumber(frame, element. properties_change_record.get('stroke_color'))
         const transform_frames = getTransformFrames(
             HexToColor(element.properties_values_record.get(change_frame).fill_color, color_model).getColorArray(),
             HexToColor(new_fill_color, color_model).getColorArray(), duration
