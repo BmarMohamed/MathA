@@ -5,8 +5,8 @@ import RenderEvents, { RenderEventsList } from "../events/render.event.js";
 import DrawStyleEvents, { DrawStyleEventsList } from "../events/draw_style.event.js";
 
 class Path extends VisualElement {
-    constructor(properties : IPathElement) {
-        super();
+    constructor(properties : IPathElement, initialize : boolean = true) {
+        super(initialize);
         this.initializeProperties<IPathElement>(properties, DefaultPathProperties);
         this.initializeEvents([RenderEvents, DrawStyleEvents]);
         this.applyStyles();

@@ -9,8 +9,8 @@ const { pi } = Lib.Constants;
 const { cos, sin } = Lib.Funcs;
 
 class Polygon extends VisualElement {
-    constructor(properties : IPolygonElement) {
-        super();
+    constructor(properties : IPolygonElement, initialize : boolean = true) {
+        super(initialize);
         this.initializeProperties<IPolygonElement>(properties, DefaultPolygonProperties);
         this.initializeEvents([RenderEvents, DrawStyleEvents]);
         this.applyStyles();

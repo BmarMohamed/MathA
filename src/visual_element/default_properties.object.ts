@@ -67,15 +67,6 @@ export const DefaultLineProperties : ILineElement = {
     from : [-1, -1],
     to : [1, 1],
 }
-export const DefaultGraphProperties : IGraphElement = {
-    ...Render,
-    ...Stroke,
-    graph_domains : [[-1, 1]],
-    unwanted_points_and_domains : [],
-    expression : (x : number) => x,
-    x_step : 0.01,
-    y_points_after_decimal_point : 5,
-}
 export const DefaultPointsProperties : IPointsElement = {
     ...Render,
     ...DrawStyle,
@@ -96,4 +87,17 @@ export const DefaultTextProperties : ITextElement = {
     text_direction : "ltr",
     font_weight : 'normal',
     text : "text"
+}
+export const DefaultGraphProperties : IGraphElement = {
+    ...Render,
+    ...Stroke,
+    graph_domains : [[-1, 1]],
+    unwanted_domains : [],
+    expression : (x : number) => x,
+    x_step : 0.01,
+    y_points_after_decimal_point : 5,
+    points : [],
+    holes : [],
+    points_properties : { ...DefaultPointsProperties },
+    holes_properties : { ...DefaultPointsProperties },
 }

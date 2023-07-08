@@ -10,8 +10,8 @@ const {getTransformFrames} = Lib.Animation;
 const { getFloorNumber: findIndexOf } = Lib.Arrays;
 
 class Line extends VisualElement {
-    constructor(properties : ILineElement) {
-        super();
+    constructor(properties : ILineElement, initialize : boolean = true) {
+        super(initialize);
         this.initializeProperties<ILineElement>(properties, DefaultLineProperties);
         this.initializeEvents([RenderEvents, StrokeEvents]);
         this.applyStyles();

@@ -45,13 +45,6 @@ export interface ILineElement extends IRender, IStroke {
     from? : [number, number],
     to? : [number, number]
 }
-export interface IGraphElement extends IRender, IStroke {
-    graph_domains? : Array<[number, number] | number>;
-    unwanted_points_and_domains? : Array<[number, number] | number>;
-    expression? : (x : number) => number;
-    x_step? : number;
-    y_points_after_decimal_point? : number;
-}
 export interface IPointsElement extends IRender, IDrawStyle {
     points? : [number, number][];
     radius? : number,
@@ -62,4 +55,15 @@ export interface IPathElement extends IRender, IDrawStyle {
 export interface ITextElement extends IRender, IFont {
     text? : string
     position? : [number, number],
+}
+export interface IGraphElement extends IRender, IStroke {
+    graph_domains? : [number, number][];
+    unwanted_domains? :[number, number][];
+    points? : [number, number][],
+    holes? : [number, number][],
+    expression? : (x : number) => number;
+    x_step? : number;
+    y_points_after_decimal_point? : number;
+    points_properties? : IPointsElement,
+    holes_properties? : IPointsElement,
 }

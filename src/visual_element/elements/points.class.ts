@@ -9,8 +9,8 @@ const { pi } = Lib.Constants;
 const { getTransformFrames } = Lib.Animation;
 
 class Points extends VisualElement {
-    constructor(properties : IPointsElement) {
-        super();
+    constructor(properties : IPointsElement, initialize : boolean = true) {
+        super(initialize);
         this.initializeProperties<IPointsElement>(properties, DefaultPointsProperties);
         this.initializeEvents([RenderEvents, DrawStyleEvents]);
         this.applyStyles();
@@ -34,6 +34,9 @@ class Points extends VisualElement {
     }
     private draw() {
         this.clear()
+        for(let point of this.points) this.drawPoint(...point);
+    }
+    public drawInComplexElement() {
         for(let point of this.points) this.drawPoint(...point);
     }
     private drawPoint(x : number, y : number) {

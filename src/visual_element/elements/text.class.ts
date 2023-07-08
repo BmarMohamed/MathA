@@ -5,8 +5,8 @@ import FontEvents, { FontEventsList } from "../events/font.event.js";
 import RenderEvents, { RenderEventsList } from "../events/render.event.js";
 
 class Text extends VisualElement {
-    constructor(properties : ITextElement) {
-        super();
+    constructor(properties : ITextElement, initialize : boolean = true) {
+        super(initialize);
         this.initializeProperties<ITextElement>(properties, DefaultTextProperties);
         this.initializeEvents([RenderEvents, FontEvents]);
         this.applyStyles();

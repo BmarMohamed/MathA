@@ -6,6 +6,15 @@ const Numbers = {
             )
         );
     },
+    isNumber(num : number) {
+        if(
+            num == undefined ||
+            num == null ||
+            Math.abs(num) == Infinity
+        )
+        return false;
+        return true
+    }
 }
 
 export default Numbers;
