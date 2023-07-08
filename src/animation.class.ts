@@ -5,13 +5,11 @@ import Queue from "./lib/classes/data_structures/queue.class.js";
 class Animation {
     static [key : string] : any;
     constructor() {}
-//===============================================================================================
     private static fps : number = 60;
     private static duration : number = 10;
     private static resolution : [ number, number ] = [ 1280, 720 ];
     private static background : string = "#000000";
     private static parent : HTMLElement = document.body;
-//===============================================================================================
     public static getProperties() {
         return {
             fps : this.fps,
@@ -36,7 +34,6 @@ class Animation {
     public static setParent(parent : HTMLElement) {
         if(!this.initialized) this.parent = parent;
     }
-//===============================================================================================
     private static initialized : boolean = false;
     public static initialize() {
         this.initialized = true;
@@ -44,7 +41,6 @@ class Animation {
         Render.width = this.getProperties().resolution[0];
         Render.height = this.getProperties().resolution[1];
     }
-//===============================================================================================  
     private static html : HTMLDivElement;
     private static initializeHtml() {
         this.html = document.createElement("div");
@@ -57,8 +53,7 @@ class Animation {
             background : ${this.getProperties().background};
         `;
         this.parent.appendChild(this.html);
-    }
-//===============================================================================================   
+    } 
     public static changesMap : Map<number, Set<VisualElement>> = new Map();
     public static actions_queue : Queue<[number, string, number]> = new Queue();
     public static currentFrame = 0;
@@ -83,18 +78,9 @@ class Animation {
     public static running_speed : number = 1;
     public static last_frame_before_stop : number = 0;
     public static animation_actions_frame : number = 0;
-    public static readonly actions = {
-        goto : 'goto',
-        stop : 'stop',
-        continue : 'continue',
-        pause : 'pause',
-        reverse : 'reverse',
-    }
-
-
     public static start() {
         this.is_animation_running = true;
-        const interval = setInterval(() => {
+        setInterval(() => {
             if(this.changesMap.has(Math.floor(this.running_frame)) && this.is_animation_running) {
                 for(let element of this.changesMap.get(Math.floor(this.running_frame))!) {
                     element.update(Math.floor(this.running_frame))
@@ -108,6 +94,13 @@ class Animation {
             this.running_frame += this.running_speed;
             
         }, 1000 / Animation.fps);
+    }
+    public static readonly actions = {
+        goto : 'goto',
+        stop : 'stop',
+        continue : 'continue',
+        pause : 'pause',
+        reverse : 'reverse',
     }
     public static goto(frame : number) {
         this.running_frame = frame;
@@ -127,7 +120,6 @@ class Animation {
     public static reverse() {
         this.running_speed *= -1;
     }
-//===============================================================================================
 }
 
 export default Animation;

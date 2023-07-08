@@ -106,9 +106,27 @@ class Graph extends ComplexVisualElement {
         this.drawHoles();
         this.applyStyles();
     }
+    private lineIsValid(x1 : number, y1 : number, x2 : number, y2 : number) {
+        if(
+            x1 < this.properties.domain![0] ||
+            x2 < this.properties.domain![0] ||
+            x1 > this.properties.domain![1] ||
+            x2 > this.properties.domain![1] ||
+            y1 < this.properties.range![0] ||
+            y2 < this.properties.range![0] ||
+            y1 > this.properties.range![1] ||
+            y2 > this.properties.range![1]
+        ) 
+        return false
+        return true
+    }
     private drawGraph() {
         for(let x_values_domain of this.x_values)
         for(let i = 0; i < x_values_domain.length - 1; i++) {
+            if(!this.lineIsValid(
+                x_values_domain[i], this.x_y_map.get(x_values_domain[i])!,
+                x_values_domain[i + 1], this.x_y_map.get(x_values_domain[i + 1])!
+            )) continue;
             this.ctx.beginPath();
             this.ctx.moveTo(...this.getCoordinatesOf(x_values_domain[i], this.x_y_map.get(x_values_domain[i])!));
             this.ctx.lineTo(...this.getCoordinatesOf(x_values_domain[i + 1], this.x_y_map.get(x_values_domain[i + 1])!));

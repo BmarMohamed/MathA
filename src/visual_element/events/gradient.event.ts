@@ -34,7 +34,7 @@ const GradientEvents : Events = {
         if(element.elements)
             for(const [K, V] of element.elements) 
                 if(V['changeGradientColors'])
-                    GradientEvents.changeGradientColor(V, frame, new_gradient_colors);
+                    GradientEvents.changeGradientColors(V, frame, new_gradient_colors);
     },
     changeGradientCoordinates(element : VisualElement, frame : number, new_start_position : [number, number], new_end_position : [number, number]) {
         element.addPropertyChangeToRecords(element, frame, 'gradient_start_position', new_start_position);
@@ -54,7 +54,6 @@ const GradientEvents : Events = {
                     GradientEvents.changeApplyGradientOn(V, frame, new_apply_on);
     }
 }
-
 export const GradientEventsList = {
     ChangeGradientColors : 'changeGradientColors',
     ChangeGradientCoordinates : 'changeGradientCoordinates',

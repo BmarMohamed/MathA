@@ -4,10 +4,9 @@ import RenderEvents, { RenderEventsList } from "../events/render.event.js";
 import StrokeEvents, { StrokeEventsList } from "../events/stroke.event.js";
 import VisualElement from "../visual_element.class.js";
 import Animation from "../../animation.class.js";
-
 import Lib from "../../lib/lib.js";
 const {getTransformFrames} = Lib.Animation;
-const { getFloorNumber: findIndexOf } = Lib.Arrays;
+const { getFloorNumber } = Lib.Arrays;
 
 class Line extends VisualElement {
     constructor(properties : ILineElement, initialize : boolean = true) {
@@ -59,13 +58,13 @@ class Line extends VisualElement {
     private changeTo(element : VisualElement, frame : number, to : [number, number]) {
         this.addPropertyChangeToRecords(element, frame, 'to', to);
     }
-    private linearChangeCoordinates(element : VisualElement, frame : number, duration : number, new_from : [number, number], new_to : [number, number]) {
-        const from_change_frame = findIndexOf(frame, element.properties_change_record.get('from'));
-        const to_change_frame = findIndexOf(frame, element.properties_change_record.get('to'));
+    private linearChangeCoordinates(element : VisualElement, start_frame : number, duration : number, new_from : [number, number], new_to : [number, number]) {
+        const from_change_frame = getFloorNumber(start_frame, element.properties_change_record.get('from'));
+        const to_change_frame = getFloorNumber(start_frame, element.properties_change_record.get('to'));
         const FromChangeFrames = getTransformFrames(this.properties_values_record.get(from_change_frame)!.from!, new_from, duration);
         const ToChangeFrames = getTransformFrames(this.properties_values_record.get(to_change_frame)!.to!, new_to, duration);
         for(let i = 1; i <= duration; i++) {
-            Animation.at(frame + i);
+            Animation.at(start_frame + i);
             Animation.do(element, "changeFrom", FromChangeFrames[i]);
             Animation.do(element, "changeTo", ToChangeFrames[i]);
         }

@@ -58,7 +58,6 @@ export const DefaultPolygonProperties : IPolygonElement = {
     ...DrawStyle,
     radius : 1,
     angles : 120,
-    rotation : 0,
     center : [0, 0],
 }
 export const DefaultLineProperties : ILineElement = {

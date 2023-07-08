@@ -72,7 +72,10 @@ class VisualElement {
     public applyStyles() {
         if(this.properties.stroke_color) this.ctx.strokeStyle = this.properties.stroke_color!;
         if(this.properties.fill_color) this.ctx.fillStyle = this.properties.fill_color!;
-        if(this.properties.line_width) this.ctx.lineWidth = this.properties.line_width!;
+        if(this.properties.line_width) {
+            this.ctx.lineWidth = this.properties.line_width!
+            this.ctx.lineCap = 'butt'
+        };
         if(this.properties.gradient_colors) {
             const gradient = this.ctx.createLinearGradient(
                 ...this.getCoordinatesOf(...this.properties.gradient_start_position! as [number, number]),

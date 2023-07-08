@@ -5,6 +5,7 @@ import Animation from "../../animation.class.js";
 import Lib from "../../lib/lib.js";
 const { getTransformFrames } = Lib.Animation;
 const { Multiply2By2Matrics, getFloorNumber } = Lib.Arrays;
+const { pi } = Lib.Constants
 
 const RenderEvents : Events = {
     changeWidth(element : VisualElement, frame : number, new_width : number) {
@@ -43,13 +44,19 @@ const RenderEvents : Events = {
                     RenderEvents.changeMatrix(V, frame, new_matrix);
     },
     addMatrix(element : VisualElement, frame : number, matrix : [[number, number], [number, number]]) {
+        const change_frame = getFloorNumber(frame, element.properties_change_record.get('matrix'))
         element.addPropertyChangeToRecords(element, frame, 'matrix', 
-            Multiply2By2Matrics(matrix, element.properties.matrix
+            Multiply2By2Matrics(matrix, element.properties_values_record.get(change_frame).matrix
         ) as [[number, number], [number, number]]);
         if(element.elements) 
             for(const [K, V] of element.elements)
                 if(V['addMatrix'])
                     RenderEvents.addMatrix(V, frame, matrix);
+    },
+    rotate(element : VisualElement, frame : number, angle : number, unit : "deg" | "rad" | "grd" = "deg") {
+        if(unit == "deg") angle *= (pi / 180);
+        else if(unit == "grd") angle *= (pi / 200);
+        RenderEvents.addMatrix(element, frame, [[Math.cos(angle), Math.sin(angle)], [Math.sin(-angle), Math.cos(angle)]]);
     },
     linearChangeWidth(element : VisualElement, start_frame : number, duration : number, new_width : number) {
         VisualElement.linearChangeEvent(element, start_frame, duration, "width" , new_width, "changeWidth")
@@ -82,6 +89,12 @@ const RenderEvents : Events = {
             Animation.do(element, "changeMatrix", [transform_matrix_i_transform_frames[i], transform_matrix_j_transform_frames[i]]);
         }
     },
+    linearRotate(element : VisualElement, frame : number, duration : number, rotation_angle : number, unit : "deg" | "rad" | "grd" = "deg") {
+        for(let i = 1; i <= duration; i++) {
+            Animation.at(frame + i);
+            Animation.do(element, "rotate", rotation_angle / duration, unit);
+        }
+    }
 }
 
 export const RenderEventsList =  {
@@ -91,12 +104,14 @@ export const RenderEventsList =  {
     ChangeRange : "changeRange",
     ChangeMatrix : "changeMatrix",
     AddMatrix : "addMatrix",
+    Rotate : "rotate",
     LinearChangeWidth : "linearChangeWidth",
     LinearChangeHeight : "linearChangeHeight",
     LinearChangeDomain : "linearChangeDomain",
     LinearChangeRange : "linearChangeRange",
     LinearChangeMatrix : "linearChangeMatrix",
     LinearAddMatrix : "linearAddMatrix",
+    LinearRotate : "linearRotate"
 }
 
 export default RenderEvents;

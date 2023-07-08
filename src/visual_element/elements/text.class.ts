@@ -10,8 +10,6 @@ class Text extends VisualElement {
         this.initializeProperties<ITextElement>(properties, DefaultTextProperties);
         this.initializeEvents([RenderEvents, FontEvents]);
         this.applyStyles();
-        // this.ctx.textBaseline = 'bottom';
-        // this.ctx.textAlign = 'center'
     }
 
     private properties! : ITextElement;

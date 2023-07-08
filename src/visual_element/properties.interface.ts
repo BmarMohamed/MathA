@@ -38,7 +38,6 @@ export { IRender, IGradientColors, IOpacity, ILine, IStroke, IFill, IDrawStyle }
 export interface IPolygonElement extends IRender , IDrawStyle {
     radius? : number;
     angles? : number[] | number;
-    rotation? : number;
     center? : [number, number];
 }
 export interface ILineElement extends IRender, IStroke {

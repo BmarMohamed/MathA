@@ -31,7 +31,7 @@ class Polygon extends VisualElement {
         LinearChangeRadius : "linearChangeRadius",
     };
     private getAngles() {
-        let angles : number[] = [this.properties.rotation!];
+        let angles : number[] = [0];
         if(typeof this.properties.angles === 'number') {
             const mod = 360 % this.properties.angles! as number;
             const div = Math.floor(360 / this.properties.angles! as number);
@@ -90,20 +90,6 @@ class Polygon extends VisualElement {
     private linearChangeRadius(element : VisualElement, frame : number, duration : number, new_radius : number) {
         VisualElement.linearChangeEvent(element, frame, duration, 'radius', new_radius, "changeRadius");
     }
-    // private changeRotationTo(element : VisualElement, new_rotation : number) {
-    //     this.properties.rotation = new_rotation;
-    //     this.angles = this.getAngles();
-    //     this.points = this.getPoints();
-    // } 
-
-    // private linearRotationBy(element : VisualElement, start_frame : number, duration : number, rotation : number) {
-    //     const rotationChangeFrames = getTransformFrames(this.properties.rotation!, this.properties.rotation! + rotation, duration);
-    //     let frame = Animation.at(start_frame);
-    //     for(let i = 0; i <= duration; i++) {
-    //         frame.doAction(this, "changeRotationTo", rotationChangeFrames[i]);
-    //         frame = frame.getNextFrame();
-    //     }
-    // }
 }
 
 export default Polygon;
