@@ -74,23 +74,22 @@ class Animation {
         Animation.changesMap.set(Animation.currentFrame, new Set([element]));
         return this.at(frame);
     }
-    // public static doAction(frame : number, action : string, param : number = 0) {
-    //     this.actions_queue.queue([frame, action, param])
-    //     return this;
-    // }
+    public static doAction(frame : number, action : string, param : number = 0) {
+        this.actions_queue.queue([frame, action, param])
+        return this;
+    }
     public static is_animation_running : boolean = false;
     public static running_frame : number = 0;
     public static running_speed : number = 1;
-    // public static last_frame_before_stop : number = 0;
-    // public static animation_actions_frame : number = 0;
-    // public static readonly actions = {
-    //     goto : 'goto',
-    //     speed : 'speed',
-    //     stop : 'stop',
-    //     continue : 'continue',
-    //     pause : 'pause',
-    //     reverse : 'reverse',
-    // }
+    public static last_frame_before_stop : number = 0;
+    public static animation_actions_frame : number = 0;
+    public static readonly actions = {
+        goto : 'goto',
+        stop : 'stop',
+        continue : 'continue',
+        pause : 'pause',
+        reverse : 'reverse',
+    }
 
 
     public static start() {
@@ -101,36 +100,33 @@ class Animation {
                     element.update(Math.floor(this.running_frame))
                 }
             }
-            // while(this.actions_queue.getLength() > 0 && this.actions_queue.currentElement()[0] === this.animation_actions_frame) {
-            //     const element = this.actions_queue.dequeue()!;
-            //     this[element[1]](element[2]);
-            // }
-            // this.animation_actions_frame++;
-            this.running_frame =  this.running_frame + this.running_speed;
+            while(this.actions_queue.getLength() > 0 && this.actions_queue.currentElement()[0] === this.animation_actions_frame) {
+                const element = this.actions_queue.dequeue()!;
+                this[element[1]](element[2]);
+            }
+            this.animation_actions_frame++;
+            this.running_frame += this.running_speed;
             
         }, 1000 / Animation.fps);
     }
-    // public static goto(frame : number) {
-    //     this.running_frame = frame;
-    // }
-    // public static speed(speed : number) {
-    //     this.running_speed = speed;
-    // }
-    // public static stop() {
-    //     this.last_frame_before_stop = this.running_frame;
-    //     this.is_animation_running = false;
-    // }
-    // public static continue() {
-    //     this.running_frame = this.last_frame_before_stop;
-    //     this.is_animation_running = true;
-    // }
-    // public static pause(duration : number) {
-    //     this.stop();
-    //     setTimeout(() => this.continue(), duration * 1000)
-    // }
-    // public static reverse() {
-    //     this.running_speed *= -1;
-    // }
+    public static goto(frame : number) {
+        this.running_frame = frame;
+    }
+    public static stop() {
+        this.last_frame_before_stop = this.running_frame;
+        this.is_animation_running = false;
+    }
+    public static continue() {
+        this.running_frame = this.last_frame_before_stop;
+        this.is_animation_running = true;
+    }
+    public static pause(duration : number) {
+        this.stop();
+        setTimeout(() => this.continue(), duration * 1000)
+    }
+    public static reverse() {
+        this.running_speed *= -1;
+    }
 //===============================================================================================
 }
 
