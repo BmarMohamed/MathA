@@ -1,1 +1,1 @@
-# MATH A
+<img src ="./src/img/thumbnail.png"/>
