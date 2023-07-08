@@ -17,6 +17,10 @@ const { getFloorNumber } = Lib.Arrays;
 const StrokeEvents : Events = {
     changeStrokeColor(element : VisualElement, frame : number, new_color : string) {
         element.addPropertyChangeToRecords(element, frame, 'stroke_color', new_color)
+        if(element.elements) 
+        for(const [K, V] of element.elements) 
+            if(V['changeStrokeColor'])
+                StrokeEvents.changeStrokeColor(V, frame, new_color);
     },
     changeStrokeColorByColorModel(element : VisualElement, frame : number, color_array : number[], color_model : "RGB" | "HSB" | "HSL" = "RGB") {
         let color : IColor;

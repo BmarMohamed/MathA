@@ -90,14 +90,12 @@ export const DefaultTextProperties : ITextElement = {
 }
 export const DefaultGraphProperties : IGraphElement = {
     ...Render,
-    ...Stroke,
+    ...DrawStyle,
     graph_domains : [[-1, 1]],
     unwanted_domains : [],
     expression : (x : number) => x,
     x_step : 0.01,
     y_points_after_decimal_point : 5,
-    points : [],
-    holes : [],
     points_properties : { ...DefaultPointsProperties },
     holes_properties : { ...DefaultPointsProperties },
 }

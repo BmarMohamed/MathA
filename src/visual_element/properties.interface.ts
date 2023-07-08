@@ -56,11 +56,9 @@ export interface ITextElement extends IRender, IFont {
     text? : string
     position? : [number, number],
 }
-export interface IGraphElement extends IRender, IStroke {
+export interface IGraphElement extends IRender, IDrawStyle {
     graph_domains? : [number, number][];
     unwanted_domains? :[number, number][];
-    points? : [number, number][],
-    holes? : [number, number][],
     expression? : (x : number) => number;
     x_step? : number;
     y_points_after_decimal_point? : number;

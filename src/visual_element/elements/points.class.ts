@@ -33,7 +33,7 @@ class Points extends VisualElement {
         this.draw();
     }
     private draw() {
-        this.clear()
+        if(this.initialized) this.clear();
         for(let point of this.points) this.drawPoint(...point);
     }
     public drawInComplexElement() {

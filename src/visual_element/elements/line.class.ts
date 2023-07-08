@@ -43,11 +43,11 @@ class Line extends VisualElement {
         this.draw();
     }
     private draw() {
-        this.clear()
-            this.ctx.beginPath();
-            this.ctx.moveTo(...this.points[0]);
-            this.ctx.lineTo(...this.points[1]);
-            this.ctx.stroke();
+        if(this.initialized) this.clear()
+        this.ctx.beginPath();
+        this.ctx.moveTo(...this.points[0]);
+        this.ctx.lineTo(...this.points[1]);
+        this.ctx.stroke();
     }
     private changeCoordinates(element : VisualElement, frame : number, from : [number, number], to : [number, number]) {
         this.changeFrom(element, frame, from);

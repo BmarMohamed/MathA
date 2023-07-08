@@ -31,15 +31,27 @@ const GradientEvents : Events = {
     changeGradientColors(element : VisualElement, frame : number, new_gradient_colors : Record<string, number>) {
         element.addPropertyChangeToRecords(element, frame, 'gradient_colors', new_gradient_colors);
         GradientEvents.setGradient(element);
+        if(element.elements)
+            for(const [K, V] of element.elements) 
+                if(V['changeGradientColors'])
+                    GradientEvents.changeGradientColor(V, frame, new_gradient_colors);
     },
     changeGradientCoordinates(element : VisualElement, frame : number, new_start_position : [number, number], new_end_position : [number, number]) {
         element.addPropertyChangeToRecords(element, frame, 'gradient_start_position', new_start_position);
         element.addPropertyChangeToRecords(element, frame, 'gradient_end_position', new_end_position);
         GradientEvents.setGradient(element);
+        if(element.elements)
+            for(const [K, V] of element.elements) 
+                if(V['changeGradientCoordinates'])
+                    GradientEvents.changeGradientCoordinates(V, frame, new_start_position, new_end_position);
     },
     changeApplyGradientOn(element : VisualElement, frame : number, new_apply_on : "stroke" | "fill" | "both" | "none") {
         element.addPropertyChangeToRecords(element, frame, 'apply_gradient_on', new_apply_on);
         GradientEvents.setGradient(element);
+        if(element.elements)
+            for(const [K, V] of element.elements) 
+                if(V['changeApplyGradientOn'])
+                    GradientEvents.changeApplyGradientOn(V, frame, new_apply_on);
     }
 }
 

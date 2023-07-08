@@ -59,7 +59,7 @@ class Polygon extends VisualElement {
         this.draw();
     }
     private draw() {
-        this.clear()
+        if(this.initialized) this.clear()
         const coordinates : [number, number][] = [];
         for(let point of this.points) coordinates.push(this.getCoordinatesOf(...point) as [number, number])
         if(this.properties.draw_style == "fill" || this.properties.draw_style == "both") this.fill(coordinates);

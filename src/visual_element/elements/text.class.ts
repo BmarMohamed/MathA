@@ -31,7 +31,7 @@ class Text extends VisualElement {
         this.draw();
     }
     private draw() {
-        this.clear();
+        if(this.initialized) this.clear();
         const coordinates = this.getCoordinatesOf(this.properties.position![0], this.properties.position![1]);
         const max_width = this.getCoordinatesOf(this.properties.max_width! - this.properties.domain![0], 0);
         if(this.properties.draw_type == "stroke") this.ctx.strokeText(this.properties.text!, ...coordinates, max_width[0]);

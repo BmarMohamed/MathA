@@ -67,11 +67,12 @@ class Animation {
         return Animation;
     }
     public static do(element : VisualElement, action : string, ...params : any[]) {
+        const frame = Animation.currentFrame;
         if(action !== 'draw') element[action](element, Animation.currentFrame, ...params);
         Animation.changesMap.has(Animation.currentFrame)?
         Animation.changesMap.get(Animation.currentFrame)!.add(element) :
         Animation.changesMap.set(Animation.currentFrame, new Set([element]));
-        return Animation;
+        return this.at(frame);
     }
     // public static doAction(frame : number, action : string, param : number = 0) {
     //     this.actions_queue.queue([frame, action, param])

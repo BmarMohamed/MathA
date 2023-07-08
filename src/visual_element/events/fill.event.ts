@@ -16,6 +16,10 @@ const { getFloorNumber } = Lib.Arrays;
 const FillEvents : Events = {
     changeFillColor(element : VisualElement, frame : number, new_color : string) {
         element.addPropertyChangeToRecords(element, frame, 'fill_color', new_color)
+        if(element.elements)
+            for(const [K, V] of element.elements) 
+                if(V['changeFillColor'])
+                    FillEvents.changeFillColor(V, frame, new_color);
     },
     changeFillColorByColorModel(element : VisualElement, frame : number, color_array : number[], color_model : "RGB" | "HSB" | "HSL") {  
         let color : IColor;
@@ -25,7 +29,7 @@ const FillEvents : Events = {
         FillEvents.changeFillColor(element, frame, color.color)
     },
     linearChangeFillColor(element : VisualElement, frame : number, duration : number, new_fill_color : string, color_model : "RGB" | "HSB" | "HSL") {
-        const change_frame = getFloorNumber(frame, element. properties_change_record.get('stroke_color'))
+        const change_frame = getFloorNumber(frame, element.properties_change_record.get('fill_color'))
         const transform_frames = getTransformFrames(
             HexToColor(element.properties_values_record.get(change_frame).fill_color, color_model).getColorArray(),
             HexToColor(new_fill_color, color_model).getColorArray(), duration

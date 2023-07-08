@@ -1,4 +1,4 @@
-import ComplexVisualElements from "./complex_visual_elements.class.js";
+import ComplexVisualElement from "./complex_visual_elements.class.js";
 import { IGraphElement } from "../properties.interface.js";
 import { DefaultGraphProperties } from "../default_properties.object.js";
 import RenderEvents, { RenderEventsList } from "../events/render.event.js";
@@ -8,16 +8,16 @@ import Points from "../elements/points.class.js";
 const { subtractDomains } = Lib.Domains;
 const { toFixedAs, isNumber } = Lib.Numbers;
 
-class Graph extends ComplexVisualElements {
+class Graph extends ComplexVisualElement {
     constructor(properties : IGraphElement) {
         super();
         this.addMustProperties(properties);
         this.addElement(
-            new Points(properties.points_properties!, true),
+            new Points(properties.points_properties!, false),
             'graph-points'
         )
         this.addElement(
-            new Points(properties.holes_properties!, true),
+            new Points(properties.holes_properties!, false),
             'graph-holes'
         )
         this.initializeProperties<IGraphElement>(properties, DefaultGraphProperties);
@@ -89,20 +89,22 @@ class Graph extends ComplexVisualElements {
     }
     private update(frame : number) {
         this.properties = this.getPropertiesAt(frame);
-        this.applyStyles();
         if(this.need_to_recalculate === true) {
             this.draw_domains = this.getDrawDomains();
             this.x_values = this.getXValues();
             this.x_y_map = this.getXYMap();
             this.need_to_recalculate = false;
         }
+        for(let [K, V] of this.elements) V.update(frame);
         this.draw();
     }
     private draw() {
         this.clear();
+        this.applyStyles();
         this.drawGraph();
         this.drawPoints();
         this.drawHoles();
+        this.applyStyles();
     }
     private drawGraph() {
         for(let x_values_domain of this.x_values)
@@ -114,10 +116,14 @@ class Graph extends ComplexVisualElements {
         }
     }
     private drawPoints() {
-
+        const graph_points = this.elements.get('graph-points')!;
+        graph_points.applyStyles();
+        graph_points.draw();
     }
     private drawHoles() {
-
+        const graph_holes = this.elements.get('graph-holes')!;
+        graph_holes.applyStyles();
+        graph_holes.draw();
     }
 }
 

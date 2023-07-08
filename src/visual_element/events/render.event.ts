@@ -9,23 +9,47 @@ const { Multiply2By2Matrics, getFloorNumber } = Lib.Arrays;
 const RenderEvents : Events = {
     changeWidth(element : VisualElement, frame : number, new_width : number) {
         element.addPropertyChangeToRecords(element, frame, 'width', new_width);
+        if(element.elements) 
+            for(const [K, V] of element.elements) 
+                if(V['changeWidth'])
+                    RenderEvents.changeWidth(V, frame, new_width);
     },
     changeHeight(element : VisualElement, frame : number, new_height : number) {
         element.addPropertyChangeToRecords(element, frame, 'height', new_height);
+        if(element.elements) 
+            for(const [K, V] of element.elements)
+                if(V['changeHeight'])
+                    RenderEvents.changeHeight(V, frame, new_height);
     },
     changeDomain(element : VisualElement,frame : number,  new_domain : [number, number]) {
         element.addPropertyChangeToRecords(element, frame, 'domain', new_domain);
+        if(element.elements) 
+            for(const [K, V] of element.elements) 
+                if(V['changeDomain'])
+                    RenderEvents.changeDomain(V, frame, new_domain);
     },
     changeRange(element : VisualElement, frame : number, new_range : [number, number]) {
         element.addPropertyChangeToRecords(element, frame, 'range', new_range);
+        if(element.elements) 
+            for(const [K, V] of element.elements) 
+                if(V['changeRange'])
+                    RenderEvents.changeRange(V, frame, new_range);
     },
     changeMatrix(element : VisualElement, frame : number, new_matrix : [[number, number], [number, number]]) {
         element.addPropertyChangeToRecords(element, frame, 'matrix', new_matrix);
+        if(element.elements) 
+            for(const [K, V] of element.elements)
+                if(V['changeMatrix']) 
+                    RenderEvents.changeMatrix(V, frame, new_matrix);
     },
     addMatrix(element : VisualElement, frame : number, matrix : [[number, number], [number, number]]) {
         element.addPropertyChangeToRecords(element, frame, 'matrix', 
             Multiply2By2Matrics(matrix, element.properties.matrix
         ) as [[number, number], [number, number]]);
+        if(element.elements) 
+            for(const [K, V] of element.elements)
+                if(V['addMatrix'])
+                    RenderEvents.addMatrix(V, frame, matrix);
     },
     linearChangeWidth(element : VisualElement, start_frame : number, duration : number, new_width : number) {
         VisualElement.linearChangeEvent(element, start_frame, duration, "width" , new_width, "changeWidth")
@@ -59,6 +83,7 @@ const RenderEvents : Events = {
         }
     },
 }
+
 export const RenderEventsList =  {
     ChangeWidth : "changeWidth",
     ChangeHeight : "changeHeight",

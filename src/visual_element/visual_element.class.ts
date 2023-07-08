@@ -9,15 +9,19 @@ class VisualElement {
     [key : string] : any;
     constructor(initialize : boolean = true) {
         this.id = VisualElement.visual_element_id++;
-        if(initialize) this.initialize();
+        this.initialized = initialize;
+        this.initialize();
     }
     private static visual_element_id = 0;
     protected id! : number; 
+    public initialized! : boolean;
     public canvas! :  HTMLCanvasElement;
     public ctx! : CanvasRenderingContext2D;
     protected isVisible! : boolean;
     private initialize() {
         this.canvas = document.createElement("canvas");
+        this.ctx = this.canvas.getContext('2d')!;
+        if(!this.initialized) return;
         this.canvas.id = `@__VisualElement${this.id}__@`;
         this.canvas.style.cssText = `
             display : inline-block;
@@ -25,7 +29,6 @@ class VisualElement {
         `;
         this.canvas.width = Animation.getProperties().resolution[0];
         this.canvas.height = Animation.getProperties().resolution[1];
-        this.ctx = this.canvas.getContext('2d')!;
         this.show();
         document.getElementById("@__MathAnimation__@")!.appendChild(this.canvas);
     }
@@ -66,7 +69,7 @@ class VisualElement {
             (this.properties.range[1] - y) * this.properties.height / (this.properties.range[1] - this.properties.range[0]),
         ]
     }
-    protected applyStyles() {
+    public applyStyles() {
         if(this.properties.stroke_color) this.ctx.strokeStyle = this.properties.stroke_color!;
         if(this.properties.fill_color) this.ctx.fillStyle = this.properties.fill_color!;
         if(this.properties.line_width) this.ctx.lineWidth = this.properties.line_width!;

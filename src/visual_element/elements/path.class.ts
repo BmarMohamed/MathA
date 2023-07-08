@@ -26,7 +26,7 @@ class Path extends VisualElement {
         this.draw();
     }
     private draw() {
-        this.clear()
+        if(this.initialized) this.clear()
         this.ctx.beginPath();
         this.ctx.moveTo(
             ...this.getCoordinatesOf(...this.properties.points![0])
