@@ -8,6 +8,20 @@ const { Multiply2By2Matrics, getFloorNumber } = Lib.Arrays;
 const { pi } = Lib.Constants
 
 const RenderEvents : Events = {
+    show(element : VisualElement, frame : number) {
+        element.addPropertyChangeToRecords(element, frame, 'visible', true);
+        if(element.elements) 
+            for(const [K, V] of element.elements) 
+                if(V['show'])
+                    RenderEvents.show(V, frame);
+    },
+    hide(element : VisualElement, frame : number) {
+        element.addPropertyChangeToRecords(element, frame, 'visible', false);
+        if(element.elements) 
+            for(const [K, V] of element.elements) 
+                if(V['hide'])
+                    RenderEvents.hide(V, frame);
+    },
     changeWidth(element : VisualElement, frame : number, new_width : number) {
         element.addPropertyChangeToRecords(element, frame, 'width', new_width);
         if(element.elements) 
@@ -98,6 +112,8 @@ const RenderEvents : Events = {
 }
 
 export const RenderEventsList =  {
+    Show : "show",
+    Hide : "hide",
     ChangeWidth : "changeWidth",
     ChangeHeight : "changeHeight",
     ChangeDomain : "changeDomain",

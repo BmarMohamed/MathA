@@ -1,4 +1,4 @@
-import ComplexVisualElement from "./complex_visual_elements.class.js";
+import ComplexVisualElement from "./complex_visual_element.class.js";
 import { IGraphElement } from "../properties.interface.js";
 import { DefaultGraphProperties } from "../default_properties.object.js";
 import RenderEvents, { RenderEventsList } from "../events/render.event.js";

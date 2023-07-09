@@ -5,6 +5,7 @@ interface IRender {
     domain? : [number, number],
     range? : [number, number],
     matrix? : [[number, number], [number, number]],
+    visible? : boolean,
 }
 interface IGradientColors {
     gradient_start_position? : [number, number];

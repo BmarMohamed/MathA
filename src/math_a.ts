@@ -1,6 +1,6 @@
 import Animation from "./animation.class.js";
 import VisualElement from "./visual_element/visual_element.class.js";
-import ComplexVisualElement from "./visual_element/complex_visual_elements/complex_visual_elements.class.js";
+import ComplexVisualElement from "./visual_element/complex_visual_elements/complex_visual_element.class.js";
 import Lib from "./lib/lib.js";
 import Polygon from "./visual_element/elements/polygon.class.js";
 import Line from "./visual_element/elements/line.class.js";

@@ -29,7 +29,6 @@ class VisualElement {
         `;
         this.canvas.width = Animation.getProperties().resolution[0];
         this.canvas.height = Animation.getProperties().resolution[1];
-        this.show();
         document.getElementById("@__MathAnimation__@")!.appendChild(this.canvas);
     }
     protected initializeProperties<IPropertiesType>(properties : IPropertiesType, default_properties : IPropertiesType) {
@@ -70,6 +69,8 @@ class VisualElement {
         ]
     }
     public applyStyles() {
+        if(!this.properties.visible) this.canvas.style.display = 'none';
+        else this.canvas.style.display = 'inline_block';
         if(this.properties.stroke_color) this.ctx.strokeStyle = this.properties.stroke_color!;
         if(this.properties.fill_color) this.ctx.fillStyle = this.properties.fill_color!;
         if(this.properties.line_width) {
@@ -103,14 +104,5 @@ class VisualElement {
     protected clear() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
-    protected show() {
-        this.canvas.style.display = "inline_block";
-        this.isVisible = true;
-    }
-    protected hide() {
-        this.canvas.style.display = "none";
-        this.isVisible = false;
-    }
 }
-
 export default VisualElement;
