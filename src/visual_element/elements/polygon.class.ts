@@ -31,7 +31,7 @@ class Polygon extends VisualElement {
         LinearChangeRadius : "linearChangeRadius",
     };
     private getAngles() {
-        let angles : number[] = [0];
+        let angles : number[] = [this.properties.start_angle!];
         if(typeof this.properties.angles === 'number') {
             const mod = 360 % this.properties.angles! as number;
             const div = Math.floor(360 / this.properties.angles! as number);
@@ -47,7 +47,7 @@ class Polygon extends VisualElement {
         const points : [number, number][] = [];
         for(let i = 0; i < this.angles.length; i++) {
             let angle = pi - this.angles[i];
-            points.push([this.properties.center![0] - this.properties.radius! * cos(angle), this.properties.center![0] + this.properties.radius! * sin(angle)])
+            points.push([this.properties.center![0] - this.properties.radius! * cos(angle), this.properties.center![1] + this.properties.radius! * sin(angle)])
         }
         return points;
     }

@@ -60,6 +60,7 @@ export const DefaultPolygonProperties : IPolygonElement = {
     radius : 1,
     angles : 120,
     center : [0, 0],
+    start_angle : 0,
 }
 export const DefaultLineProperties : ILineElement = {
     ...Render,
@@ -70,7 +71,7 @@ export const DefaultLineProperties : ILineElement = {
 export const DefaultPointsProperties : IPointsElement = {
     ...Render,
     ...DrawStyle,
-    points : [[0,0]],
+    points : [],
     radius : 1,
 }
 export const DefaultPathProperties : IPathElement = {

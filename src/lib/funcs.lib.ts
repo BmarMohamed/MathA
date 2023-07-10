@@ -5,6 +5,7 @@ const Funcs = {
     sec : (x : number) => 1 / Math.cos(x),
     scs : (x : number) => 1 / Math.sin(x),
     cot : (x : number) => 1 / Math.tan(x),
+    sinc : (x : number) => Math.sin(x) / x,
     exp : (x : number) => Math.exp(x),
     ln : (x : number) => Math.log(x),
     rt : (x : number) => Math.sqrt(x),

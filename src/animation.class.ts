@@ -69,6 +69,10 @@ class Animation {
         Animation.changesMap.set(Animation.currentFrame, new Set([element]));
         return this.at(frame);
     }
+    public static doFor(action : string, elements : VisualElement[], ...params : any[]) {
+        for(let element of elements) this.do(element, action, ...params);
+        return this;
+    }
     public static doAction(frame : number, action : string, param : number = 0) {
         this.actions_queue.queue([frame, action, param])
         return this;

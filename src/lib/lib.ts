@@ -5,6 +5,7 @@ import Colors from "./colors.lib.js";
 import Numbers from "./number.lib.js";
 import Arrays from "./array.lib.js";
 import Domains from "./domains.lib.js";
+import Symbols from "./symbols.lib.js";
 
 const Lib = {
     Constants,
@@ -14,6 +15,7 @@ const Lib = {
     Numbers,
     Arrays,
     Domains,
+    Symbols
 }
 
 export default Lib;

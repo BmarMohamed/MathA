@@ -40,6 +40,7 @@ export interface IPolygonElement extends IRender , IDrawStyle {
     radius? : number;
     angles? : number[] | number;
     center? : [number, number];
+    start_angle? :number;
 }
 export interface ILineElement extends IRender, IStroke {
     from? : [number, number],
