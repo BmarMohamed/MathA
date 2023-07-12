@@ -57,6 +57,12 @@ export interface ITextElement extends IRender, IFont {
     text? : string
     position? : [number, number],
 }
+export interface ICoordinatesPlaneElement extends IRender, IStroke {
+    start_point? : [number, number],
+    end_point? : [number, number],
+    v_lines? : number[],
+    h_lines? : number[],
+}
 export interface IGraphElement extends IRender, IDrawStyle {
     graph_domains? : [number, number][];
     unwanted_domains? :[number, number][];

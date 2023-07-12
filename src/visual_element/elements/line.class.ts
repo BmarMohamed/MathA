@@ -24,7 +24,7 @@ class Line extends VisualElement {
         ...RenderEventsList,
         ...StrokeEventsList,
         Draw : 'draw',
-        ChangeCoordinates : "ChangeCoordinates",
+        ChangeCoordinates : "changeCoordinates",
         ChangeFrom : 'changeFrom',
         ChangeTo : 'changeTo',
         LinearChangeCoordinates : "linearChangeCoordinates"

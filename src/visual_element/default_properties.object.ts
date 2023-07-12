@@ -12,6 +12,7 @@ import {
     IPointsElement,
     IPathElement,
     ITextElement,
+    ICoordinatesPlaneElement
 } from "./properties.interface.js";
 
 export const Render : IRender = {
@@ -77,7 +78,7 @@ export const DefaultPointsProperties : IPointsElement = {
 export const DefaultPathProperties : IPathElement = {
     ...Render,
     ...DrawStyle,
-    points : [],
+    points : [[0, 0]],
 }
 export const DefaultTextProperties : ITextElement = {
     ...DrawStyle,
@@ -99,4 +100,12 @@ export const DefaultGraphProperties : IGraphElement = {
     y_points_after_decimal_point : 5,
     points_properties : { ...DefaultPointsProperties },
     holes_properties : { ...DefaultPointsProperties },
+}
+export const DefaultCoordinatesPlaneProperties : ICoordinatesPlaneElement = {
+    ...Render,
+    ...Stroke,
+    start_point : [-8, 4.5],
+    end_point : [8, -4.5],
+    v_lines : [-8, -7, -6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8],
+    h_lines : [-4, -3, -2, -1, 0, 1, 2, 3, 4]
 }

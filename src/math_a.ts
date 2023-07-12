@@ -8,6 +8,7 @@ import Points from "./visual_element/elements/points.class.js";
 import Path from "./visual_element/elements/path.class.js";
 import Text from "./visual_element/elements/text.class.js";
 import Graph from "./visual_element/complex_visual_elements/graph.class.js";
+import CooridnatesPlane from "./visual_element/complex_visual_elements/coordinates_plane.class.js";
 
 export default {
     Animation,
@@ -22,6 +23,7 @@ export default {
     },
     ComplexElements : {
         Graph,
+        CooridnatesPlane,
     },
     Lib,
 }
