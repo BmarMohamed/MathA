@@ -3,10 +3,11 @@ import { ITextElement } from "../properties.interface.js";
 import { DefaultTextProperties } from "../default_properties.object.js";
 import FontEvents, { FontEventsList } from "../events/font.event.js";
 import RenderEvents, { RenderEventsList } from "../events/render.event.js";
+import Animation from "../../animation.class.js";
 
 class Text extends VisualElement {
-    constructor(properties : ITextElement, initialize : boolean = true) {
-        super(initialize);
+    constructor(properties : ITextElement) {
+        super();
         this.initializeProperties<ITextElement>(properties, DefaultTextProperties);
         this.initializeEvents([RenderEvents, FontEvents]);
         this.applyStyles();
@@ -25,15 +26,14 @@ class Text extends VisualElement {
     };
     private update(frame : number) {
         this.properties = this.getPropertiesAt(frame);
-        this.applyStyles();
         this.draw();
     }
     private draw() {
-        if(this.initialized) this.clear();
         const coordinates = this.getCoordinatesOf(this.properties.position![0], this.properties.position![1]);
         const max_width = this.getCoordinatesOf(this.properties.max_width! - this.properties.domain![0], 0);
-        if(this.properties.draw_type == "stroke") this.ctx.strokeText(this.properties.text!, ...coordinates, max_width[0]);
-        else this.ctx.fillText(this.properties.text!,...coordinates, max_width[0]);
+        this.applyStyles();
+        if(this.properties.draw_type == "stroke") Animation.ctx.strokeText(this.properties.text!, ...coordinates, max_width[0]);
+        else Animation.ctx.fillText(this.properties.text!,...coordinates, max_width[0]);
     }
     changeText(element : VisualElement, frame : number, new_text : string) {
         element.addPropertyChangeToRecords(element, frame, 'text', new_text);

@@ -7,30 +7,13 @@ const { Multiply2By2Matrics, getFloorNumber } = Lib.Arrays;
 
 class VisualElement {
     [key : string] : any;
-    constructor(initialize : boolean = true) {
+    constructor() {
         this.id = VisualElement.visual_element_id++;
-        this.initialized = initialize;
-        this.initialize();
+        Animation.elements.push(this)
     }
     private static visual_element_id = 0;
     protected id! : number; 
     public initialized! : boolean;
-    public canvas! :  HTMLCanvasElement;
-    public ctx! : CanvasRenderingContext2D;
-    protected isVisible! : boolean;
-    private initialize() {
-        this.canvas = document.createElement("canvas");
-        this.ctx = this.canvas.getContext('2d')!;
-        if(!this.initialized) return;
-        this.canvas.id = `@__VisualElement${this.id}__@`;
-        this.canvas.style.cssText = `
-            display : inline-block;
-            position : absolute;
-        `;
-        this.canvas.width = Animation.getProperties().resolution[0];
-        this.canvas.height = Animation.getProperties().resolution[1];
-        document.getElementById("@__MathAnimation__@")!.appendChild(this.canvas);
-    }
     protected initializeProperties<IPropertiesType>(properties : IPropertiesType, default_properties : IPropertiesType) {
         this.properties = { ...default_properties }
         this.properties.height = Render.height;
@@ -69,40 +52,35 @@ class VisualElement {
         ]
     }
     public applyStyles() {
-        if(!this.properties.visible) this.canvas.style.display = 'none';
-        else this.canvas.style.display = 'inline_block';
-        if(this.properties.stroke_color) this.ctx.strokeStyle = this.properties.stroke_color!;
-        if(this.properties.fill_color) this.ctx.fillStyle = this.properties.fill_color!;
+        if(this.properties.stroke_color) Animation.ctx.strokeStyle = this.properties.stroke_color!;
+        if(this.properties.fill_color) Animation.ctx.fillStyle = this.properties.fill_color!;
         if(this.properties.line_width) {
-            this.ctx.lineWidth = this.properties.line_width!
-            this.ctx.lineCap = 'butt'
+            Animation.ctx.lineWidth = this.properties.line_width!
+            Animation.ctx.lineCap = 'butt'
         };
         if(this.properties.gradient_colors) {
-            const gradient = this.ctx.createLinearGradient(
+            const gradient = Animation.ctx.createLinearGradient(
                 ...this.getCoordinatesOf(...this.properties.gradient_start_position! as [number, number]),
                 ...this.getCoordinatesOf(...this.properties.gradient_end_position! as [number, number])
             )
             for(const color in this.properties.gradient_colors!) {
                 gradient.addColorStop(this.properties.gradient_colors![color], color)
             }
-            if(this.properties.apply_gradient_on == "stroke" || this.properties.apply_gradient_on == "both") this.ctx.strokeStyle = gradient;
-            if(this.properties.apply_gradient_on == "fill" || this.properties.apply_gradient_on == "both") this.ctx.fillStyle = gradient;
+            if(this.properties.apply_gradient_on == "stroke" || this.properties.apply_gradient_on == "both") Animation.ctx.strokeStyle = gradient;
+            if(this.properties.apply_gradient_on == "fill" || this.properties.apply_gradient_on == "both") Animation.ctx.fillStyle = gradient;
         }
-        if(this.properties.opacity) this.ctx.globalAlpha = this.properties.opacity!;
+        if(this.properties.opacity) Animation.ctx.globalAlpha = this.properties.opacity!;
         if(this.properties.text) {
-            this.ctx.font = `${this.properties.font_weight!} ${this.properties.font_size!}px ${this.properties.font_family!}`;
-            this.ctx.textAlign = "center";
-            this.ctx.textBaseline = "middle";
-            this.ctx.direction = this.properties.text_direction!;
+            Animation.ctx.font = `${this.properties.font_weight!} ${this.properties.font_size!}px ${this.properties.font_family!}`;
+            Animation.ctx.textAlign = "center";
+            Animation.ctx.textBaseline = "middle";
+            Animation.ctx.direction = this.properties.text_direction!;
         }
     }
     public static linearChangeEvent(element : VisualElement, frame : number, duration : number, property : string, new_value : number | number[], change_event : string) {
         const initial_value = element.properties_values_record.get(getFloorNumber(frame, element.properties_change_record.get(property)!))![property]!;
         const transform_frames = getTransformFrames(initial_value, new_value, duration);
         for(let i = 1; i <= duration; i++) Animation.at(frame + i).do(element, change_event, transform_frames[i]);
-    }
-    protected clear() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 }
 export default VisualElement;

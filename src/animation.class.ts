@@ -41,18 +41,20 @@ class Animation {
         Render.width = this.getProperties().resolution[0];
         Render.height = this.getProperties().resolution[1];
     }
-    private static html : HTMLDivElement;
+    public static canvas : HTMLCanvasElement;
+    public static ctx : CanvasRenderingContext2D;
     private static initializeHtml() {
-        this.html = document.createElement("div");
-        this.html.id = "@__MathAnimation__@";
-        this.html.style.cssText = `
+        this.canvas = document.createElement("canvas");
+        this.canvas.id = "@__MathAnimation__@";
+        this.canvas.style.cssText = `
             display : inline-block;
             position : relative;
-            width : ${this.getProperties().resolution[0]}px;
-            height : ${this.getProperties().resolution[1]}px;
             background : ${this.getProperties().background};
         `;
-        this.parent.appendChild(this.html);
+        this.canvas.width = this.getProperties().resolution[0];
+        this.canvas.height = this.getProperties().resolution[1];
+        this.ctx = this.canvas.getContext('2d')!;
+        this.parent.appendChild(this.canvas);
     } 
     public static changesMap : Map<number, Set<VisualElement>> = new Map();
     public static actions_queue : Queue<[number, string, number]> = new Queue();
@@ -82,12 +84,16 @@ class Animation {
     public static running_speed : number = 1;
     public static last_frame_before_stop : number = 0;
     public static animation_actions_frame : number = 0;
+    public static elements : VisualElement[] = []; 
     public static start() {
         this.is_animation_running = true;
         setInterval(() => {
             if(this.changesMap.has(Math.floor(this.running_frame)) && this.is_animation_running) {
-                for(let element of this.changesMap.get(Math.floor(this.running_frame))!) {
-                    element.update(Math.floor(this.running_frame))
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+                const changed_elements = this.changesMap.get(Math.floor(this.running_frame))!
+                for(let element of this.elements) {
+                    if(changed_elements.has(element)) element.update(Math.floor(this.running_frame));
+                    else element.draw();
                 }
             }
             while(this.actions_queue.getLength() > 0 && this.actions_queue.currentElement()[0] === this.animation_actions_frame) {

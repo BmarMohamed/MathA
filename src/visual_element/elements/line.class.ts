@@ -9,8 +9,8 @@ const {getTransformFrames} = Lib.Animation;
 const { getFloorNumber } = Lib.Arrays;
 
 class Line extends VisualElement {
-    constructor(properties : ILineElement, initialize : boolean = true) {
-        super(initialize);
+    constructor(properties : ILineElement) {
+        super();
         this.initializeProperties<ILineElement>(properties, DefaultLineProperties);
         this.initializeEvents([RenderEvents, StrokeEvents]);
         this.applyStyles();
@@ -37,16 +37,15 @@ class Line extends VisualElement {
     }
     private update(frame : number) {
         this.properties = this.getPropertiesAt(frame);
-        this.applyStyles();
         this.points = this.getPoints();
         this.draw();
     }
     private draw() {
-        if(this.initialized) this.clear()
-        this.ctx.beginPath();
-        this.ctx.moveTo(...this.points[0]);
-        this.ctx.lineTo(...this.points[1]);
-        this.ctx.stroke();
+        this.applyStyles();
+        Animation.ctx.beginPath();
+        Animation.ctx.moveTo(...this.points[0]);
+        Animation.ctx.lineTo(...this.points[1]);
+        Animation.ctx.stroke();
     }
     private changeCoordinates(element : VisualElement, frame : number, from : [number, number], to : [number, number]) {
         this.changeFrom(element, frame, from);

@@ -11,8 +11,8 @@ const { getFloorNumber } = Lib.Arrays;
 const { getTransformFrames } = Lib.Animation;
 
 class Polygon extends VisualElement {
-    constructor(properties : IPolygonElement, initialize : boolean = true) {
-        super(initialize);
+    constructor(properties : IPolygonElement) {
+        super();
         this.initializeProperties<IPolygonElement>(properties, DefaultPolygonProperties);
         this.initializeEvents([RenderEvents, DrawStyleEvents]);
         this.applyStyles();
@@ -58,33 +58,32 @@ class Polygon extends VisualElement {
     }
     private update(frame : number) {
         this.properties = this.getPropertiesAt(frame);
-        this.applyStyles();
         this.angles = this.getAngles();
         this.points = this.getPoints();
         this.draw();
     }
     private draw() {
-        if(this.initialized) this.clear()
         const coordinates : [number, number][] = [];
         for(let point of this.points) coordinates.push(this.getCoordinatesOf(...point) as [number, number])
+        this.applyStyles();
         if(this.properties.draw_style == "fill" || this.properties.draw_style == "both") this.fill(coordinates);
         if(this.properties.draw_style == "stroke" || this.properties.draw_style == "both") this.stroke(coordinates);
     }
     private stroke(coordinates : [number, number][]) {
-        this.ctx.beginPath();
-        this.ctx.moveTo(...coordinates[0])
+        Animation.ctx.beginPath();
+        Animation.ctx.moveTo(...coordinates[0])
         for(let i = 1; i < coordinates.length - 1; i++) {
-            this.ctx.lineTo(...coordinates[i])
+            Animation.ctx.lineTo(...coordinates[i])
         }
-        this.ctx.stroke()
+        Animation.ctx.stroke()
     }
     private fill(coordinates : [number, number][]) {
-        this.ctx.beginPath();
-        this.ctx.moveTo(...coordinates[0])
+        Animation.ctx.beginPath();
+        Animation.ctx.moveTo(...coordinates[0])
         for(let i = 1; i < coordinates.length - 1; i++) {
-            this.ctx.lineTo(...coordinates[i])
+            Animation.ctx.lineTo(...coordinates[i])
         }
-        this.ctx.fill()
+        Animation.ctx.fill()
     }
     private changeAngles(element : Polygon, frame : number, new_angles : number | number[]) {
         this.addPropertyChangeToRecords(element, frame, 'angles', new_angles);

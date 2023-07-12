@@ -9,8 +9,8 @@ const { pi } = Lib.Constants;
 const { getTransformFrames } = Lib.Animation;
 
 class Points extends VisualElement {
-    constructor(properties : IPointsElement, initialize : boolean = true) {
-        super(initialize);
+    constructor(properties : IPointsElement) {
+        super();
         this.initializeProperties<IPointsElement>(properties, DefaultPointsProperties);
         this.initializeEvents([RenderEvents, DrawStyleEvents]);
         this.applyStyles();
@@ -29,11 +29,10 @@ class Points extends VisualElement {
     };
     private update(frame : number) {
         this.properties = this.getPropertiesAt(frame);
-        this.applyStyles();
         this.draw();
     }
     private draw() {
-        if(this.initialized) this.clear();
+        this.applyStyles();
         for(let point of this.points) this.drawPoint(...point);
     }
     public drawInComplexElement() {
@@ -41,10 +40,10 @@ class Points extends VisualElement {
     }
     private drawPoint(x : number, y : number) {
         const position = this.getCoordinatesOf(x, y);
-        this.ctx.beginPath();
-        this.ctx.arc(...position, this.properties.radius!, 0, pi * 2);
-        if(this.properties.draw_style == "fill" || this.properties.draw_style == "both") this.ctx.fill();
-        if(this.properties.draw_style == "stroke" || this.properties.draw_style == "both") this.ctx.stroke();
+        Animation.ctx.beginPath();
+        Animation.ctx.arc(...position, this.properties.radius!, 0, pi * 2);
+        if(this.properties.draw_style == "fill" || this.properties.draw_style == "both") Animation.ctx.fill();
+        if(this.properties.draw_style == "stroke" || this.properties.draw_style == "both") Animation.ctx.stroke();
     }
     private changeRadius(element : VisualElement, frame : number, new_radius : number) {
         this.addPropertyChangeToRecords(element, frame, 'radius', new_radius);

@@ -3,6 +3,7 @@ import { IGraphElement } from "../properties.interface.js";
 import { DefaultGraphProperties } from "../default_properties.object.js";
 import RenderEvents, { RenderEventsList } from "../events/render.event.js";
 import DrawStyleEvents, { DrawStyleEventsList } from "../events/draw_style.event.js";
+import Animation from "../../animation.class.js";
 import Lib from "../../lib/lib.js";
 import Points from "../elements/points.class.js";
 const { subtractDomains } = Lib.Domains;
@@ -13,11 +14,11 @@ class Graph extends ComplexVisualElement {
         super();
         this.addMustProperties(properties);
         this.addElement(
-            new Points(properties.points_properties!, false),
+            new Points(properties.points_properties!),
             'graph-points'
         )
         this.addElement(
-            new Points(properties.holes_properties!, false),
+            new Points(properties.holes_properties!),
             'graph-holes'
         )
         this.initializeProperties<IGraphElement>(properties, DefaultGraphProperties);
@@ -95,16 +96,14 @@ class Graph extends ComplexVisualElement {
             this.x_y_map = this.getXYMap();
             this.need_to_recalculate = false;
         }
-        for(let [K, V] of this.elements) V.update(frame);
         this.draw();
+
     }
     private draw() {
-        this.clear();
         this.applyStyles();
         this.drawGraph();
         this.drawPoints();
         this.drawHoles();
-        this.applyStyles();
     }
     private lineIsValid(x1 : number, y1 : number, x2 : number, y2 : number) {
         if(
@@ -127,10 +126,10 @@ class Graph extends ComplexVisualElement {
                 x_values_domain[i], this.x_y_map.get(x_values_domain[i])!,
                 x_values_domain[i + 1], this.x_y_map.get(x_values_domain[i + 1])!
             )) continue;
-            this.ctx.beginPath();
-            this.ctx.moveTo(...this.getCoordinatesOf(x_values_domain[i], this.x_y_map.get(x_values_domain[i])!));
-            this.ctx.lineTo(...this.getCoordinatesOf(x_values_domain[i + 1], this.x_y_map.get(x_values_domain[i + 1])!));
-            this.ctx.stroke();
+            Animation.ctx.beginPath();
+            Animation.ctx.moveTo(...this.getCoordinatesOf(x_values_domain[i], this.x_y_map.get(x_values_domain[i])!));
+            Animation.ctx.lineTo(...this.getCoordinatesOf(x_values_domain[i + 1], this.x_y_map.get(x_values_domain[i + 1])!));
+            Animation.ctx.stroke();
         }
     }
     private drawPoints() {

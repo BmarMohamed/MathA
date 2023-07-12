@@ -8,7 +8,7 @@ import Line from "../elements/line.class.js";
 class CooridnatesPlane extends ComplexVisualElement {
     constructor(properties : ICoordinatesPlaneElement) {
         super();
-        this.addElement(new Line({}, false), 'line')
+        this.addElement(new Line({}), 'line')
         this.initializeProperties<ICoordinatesPlaneElement>(properties, DefaultCoordinatesPlaneProperties);
         this.initializeEvents([RenderEvents, StrokeEvents]);
         this.elements.get('line')!.properties = this.properties as ILineElement;
@@ -25,10 +25,11 @@ class CooridnatesPlane extends ComplexVisualElement {
     public update(frame : number) {
         this.properties = this.getPropertiesAt(frame);
         this.elements.get('line')!.properties = this.properties as ILineElement;
-        this.elements.get('line')!.applyStyles();
+        
         this.draw()
     }
     private draw() {
+        this.elements.get('line')!.applyStyles();
         this.clear();
         for(let v_line of this.properties.v_lines!) {
             this.elements.get('line')!.properties.from = [v_line, this.properties.start_point![1]];

@@ -3,14 +3,16 @@ import { IPathElement } from "../properties.interface.js";
 import { DefaultPathProperties } from "../default_properties.object.js";
 import RenderEvents, { RenderEventsList } from "../events/render.event.js";
 import DrawStyleEvents, { DrawStyleEventsList } from "../events/draw_style.event.js";
+import Animation from "../../animation.class.js";
 
 class Path extends VisualElement {
-    constructor(properties : IPathElement, initialize : boolean = true) {
-        super(initialize);
+    constructor(properties : IPathElement) {
+        super();
         this.initializeProperties<IPathElement>(properties, DefaultPathProperties);
         this.initializeEvents([RenderEvents, DrawStyleEvents]);
         this.applyStyles();
     }
+
     private properties! : IPathElement;
     private properties_change_record! : Map<string, number[]>;
     private properties_values_record! : Map<number, IPathElement>;
@@ -22,55 +24,54 @@ class Path extends VisualElement {
     }
     private update(frame : number) {
         this.properties = this.getPropertiesAt(frame);
-        this.applyStyles();
         this.draw();
     }
     private draw() {
-        if(this.initialized) this.clear()
-        this.ctx.beginPath();
-        this.ctx.moveTo(
+        this.applyStyles();
+        Animation.ctx.beginPath();
+        Animation.ctx.moveTo(
             ...this.getCoordinatesOf(...this.properties.points![0])
         );
         for(let i = 1; i < this.properties.points!.length; i++) {
-            this.ctx.lineTo(
+            Animation.ctx.lineTo(
                 ...this.getCoordinatesOf(...this.properties.points![i])
             );
         }
-        this.ctx.lineTo(
+        Animation.ctx.lineTo(
             ...this.getCoordinatesOf(...this.properties.points![0])
         );
         if(this.properties.draw_style == "fill" || this.properties.draw_style == "both") this.fill();
         if(this.properties.draw_style == "stroke" || this.properties.draw_style == "both") this.stroke();
     }
     private stroke() {
-        this.ctx.beginPath();
-        this.ctx.moveTo(
+        Animation.ctx.beginPath();
+        Animation.ctx.moveTo(
             ...this.getCoordinatesOf(...this.properties.points![0])
         );
         for(let i = 1; i < this.properties.points!.length; i++) {
-            this.ctx.lineTo(
+            Animation.ctx.lineTo(
                 ...this.getCoordinatesOf(...this.properties.points![i])
             );
         }
-        this.ctx.lineTo(
+        Animation.ctx.lineTo(
             ...this.getCoordinatesOf(...this.properties.points![0])
         );
-        this.ctx.stroke()
+        Animation.ctx.stroke()
     }
     private fill() {
-        this.ctx.beginPath();
-        this.ctx.moveTo(
+        Animation.ctx.beginPath();
+        Animation.ctx.moveTo(
             ...this.getCoordinatesOf(...this.properties.points![0])
         );
         for(let i = 1; i < this.properties.points!.length; i++) {
-            this.ctx.lineTo(
+            Animation.ctx.lineTo(
                 ...this.getCoordinatesOf(...this.properties.points![i])
             );
         }
-        this.ctx.lineTo(
+        Animation.ctx.lineTo(
             ...this.getCoordinatesOf(...this.properties.points![0])
         );
-        this.ctx.fill()
+        Animation.ctx.fill()
     }
     private changePoints(element : Path, frame : number, new_points : [number , number][]) {
         this.addPropertyChangeToRecords(element, frame, 'points', new_points);
