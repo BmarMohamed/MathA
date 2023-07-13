@@ -12,7 +12,8 @@ import {
     IPointsElement,
     IPathElement,
     ITextElement,
-    ICoordinatesPlaneElement
+    ICoordinatesPlaneElement,
+    IFont
 } from "./properties.interface.js";
 
 export const Render : IRender = {
@@ -54,6 +55,15 @@ const DrawStyle : IDrawStyle = {
     ...Stroke,
     ...Fill,
     draw_style : "both",
+}
+const Font : IFont = {
+    font_size : 16,
+    max_width : 16,
+    font_family : "",
+    text_direction : "ltr",
+    font_weight : "100",
+    text_align : "center",
+    text_base_line : "middle"
 }
 export const DefaultPolygonProperties : IPolygonElement = {
     ...Render,

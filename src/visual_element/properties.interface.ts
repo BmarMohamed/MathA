@@ -34,8 +34,10 @@ interface IFont extends IDrawStyle {
     font_family? : string,
     text_direction? : "ltr" | "rtl",
     font_weight? : string,
+    text_align? : "start" | "end" | "left" | "right" | "center",
+    text_base_line? : "top" | "hanging" | "middle" | "alphabetic" | "ideographic" | "bottom",
 }
-export { IRender, IGradientColors, IOpacity, ILine, IStroke, IFill, IDrawStyle }
+export { IRender, IGradientColors, IOpacity, ILine, IStroke, IFill, IDrawStyle, IFont }
 export interface IPolygonElement extends IRender , IDrawStyle {
     radius? : number;
     angles? : number[] | number;

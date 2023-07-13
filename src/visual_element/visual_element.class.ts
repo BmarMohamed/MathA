@@ -72,8 +72,8 @@ class VisualElement {
         if(this.properties.opacity) Animation.ctx.globalAlpha = this.properties.opacity!;
         if(this.properties.text) {
             Animation.ctx.font = `${this.properties.font_weight!} ${this.properties.font_size!}px ${this.properties.font_family!}`;
-            Animation.ctx.textAlign = "center";
-            Animation.ctx.textBaseline = "middle";
+            Animation.ctx.textAlign = this.properties.text_align! || 'center';
+            Animation.ctx.textBaseline = this.properties.text_base_line! || 'middle';
             Animation.ctx.direction = this.properties.text_direction!;
         }
     }

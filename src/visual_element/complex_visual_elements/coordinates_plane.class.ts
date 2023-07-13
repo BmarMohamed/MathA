@@ -30,7 +30,6 @@ class CooridnatesPlane extends ComplexVisualElement {
     }
     private draw() {
         this.elements.get('line')!.applyStyles();
-        this.clear();
         for(let v_line of this.properties.v_lines!) {
             this.elements.get('line')!.properties.from = [v_line, this.properties.start_point![1]];
             this.elements.get('line')!.properties.to = [v_line, this.properties.end_point![1]];
